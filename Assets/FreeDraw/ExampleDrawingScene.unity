@@ -478,7 +478,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Pen_Colour: {r: 1, g: 0, b: 0, a: 1}
-  PenRadius: 10
+  PenRadius: 50
   Drawing_Layers:
     serializedVersion: 2
     m_Bits: 2147483647
