@@ -77,20 +77,7 @@ namespace FreeDraw
             if (mouse_held_down && !no_drawing_on_current_drag)
             {
                 Vector2 mouse_world_position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Collider2D hit = Physics2D.OverlapPoint(mouse_world_position, Drawing_Layers.value);
-                if (hit != null && hit.transform != null)
-                {
-                    current_brush(mouse_world_position);
-                }
-
-                else
-                {
-                    previous_drag_position = Vector2.zero;
-                    if (!mouse_was_previously_held_down)
-                    {
-                        no_drawing_on_current_drag = true;
-                    }
-                }
+                current_brush(mouse_world_position);
             }
             else if (!mouse_held_down)
             {
@@ -107,7 +94,7 @@ namespace FreeDraw
 
             Vector2 cur_position = start_point;
 
-            float lerp_steps = 1 / distance;
+            float lerp_steps = 1 / (distance / PenRadius);
 
             for (float lerp = 0; lerp <= 1; lerp += lerp_steps)
             {
