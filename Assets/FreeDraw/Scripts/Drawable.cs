@@ -10,26 +10,26 @@ namespace FreeDraw
     public class Drawable : MonoBehaviour
     {
         public Texture2D drawingTexture;
+        Color32[] drawingTextureColors;
         public int PenRadius = 10;
 
         public delegate void Brush_Function(Vector2 world_position);
-        public Brush_Function current_brush;
         public bool Reset_Canvas_On_Play = true;
         public Color Reset_Colour = new Color(0, 0, 0, 0);
         public static Drawable drawable;
-        Sprite drawable_sprite;
-        Texture2D drawable_texture;
+        Sprite drawableSprite;
+        Texture2D drawableTexture;
 
         Vector2 previous_drag_position;
         Color[] clean_colours_array;
         Color transparent;
-        Color32[] cur_colors;
+        Color32[] pixelArray;
 
         public void PenBrush(Vector2 world_point)
         {
             Vector2 pixel_pos = WorldToPixelCoordinates(world_point);
 
-            cur_colors = drawable_texture.GetPixels32();
+            pixelArray = drawableTexture.GetPixels32();
 
             if (previous_drag_position == Vector2.zero)
             {
@@ -44,18 +44,13 @@ namespace FreeDraw
             previous_drag_position = pixel_pos;
         }
 
-        public void SetPenBrush()
-        {
-            current_brush = PenBrush;
-        }
-
         void Update()
         {
             bool mouse_held_down = Input.GetMouseButton(0);
             if (mouse_held_down)
             {
                 Vector2 mouse_world_position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                current_brush(mouse_world_position);
+                PenBrush(mouse_world_position);
             }
             else if (!mouse_held_down)
             {
@@ -70,7 +65,7 @@ namespace FreeDraw
 
             Vector2 cur_position = start_point;
 
-            float lerp_steps = 1 / (distance / PenRadius);
+            float lerp_steps = 1 / (distance / (PenRadius));
 
             for (float lerp = 0; lerp <= 1; lerp += lerp_steps)
             {
@@ -86,36 +81,32 @@ namespace FreeDraw
 
             for (int x = center_x - pen_thickness; x <= center_x + pen_thickness; x++)
             {
-                if (x >= (int)drawable_sprite.rect.width || x < 0)
+                if (x >= (int)drawableSprite.rect.width || x < 0)
                     continue;
 
                 for (int y = center_y - pen_thickness; y <= center_y + pen_thickness; y++)
                 {
-                    MarkPixelToChange(x, y, drawingTexture);
+                    if (y >= drawableSprite.rect.height || y < 0)
+                        continue;
+                    int arrayPosition = y * (int)drawableSprite.rect.width + x;
+                    pixelArray[arrayPosition] = drawingTextureColors[(x % drawingTexture.width) + ((y % drawingTexture.height) * drawingTexture.width)];
                 }
             }
         }
-        public void MarkPixelToChange(int x, int y, Texture2D drawingTexture)
-        {
-            int array_pos = y * (int)drawable_sprite.rect.width + x;
 
-            if (array_pos >= cur_colors.Length || array_pos < 0)
-                return;
-            cur_colors[array_pos] = drawingTexture.GetPixel(x % drawingTexture.width, y % drawingTexture.height);
-        }
         public void ApplyMarkedPixelChanges()
         {
-            drawable_texture.SetPixels32(cur_colors);
-            drawable_texture.Apply();
+            drawableTexture.SetPixels32(pixelArray);
+            drawableTexture.Apply();
         }
 
         public Vector2 WorldToPixelCoordinates(Vector2 world_position)
         {
             Vector3 local_pos = transform.InverseTransformPoint(world_position);
 
-            float pixelWidth = drawable_sprite.rect.width;
-            float pixelHeight = drawable_sprite.rect.height;
-            float unitsToPixels = pixelWidth / drawable_sprite.bounds.size.x * transform.localScale.x;
+            float pixelWidth = drawableSprite.rect.width;
+            float pixelHeight = drawableSprite.rect.height;
+            float unitsToPixels = pixelWidth / drawableSprite.bounds.size.x * transform.localScale.x;
 
             float centered_x = local_pos.x * unitsToPixels + pixelWidth / 2;
             float centered_y = local_pos.y * unitsToPixels + pixelHeight / 2;
@@ -127,19 +118,18 @@ namespace FreeDraw
 
         public void ResetCanvas()
         {
-            drawable_texture.SetPixels(clean_colours_array);
-            drawable_texture.Apply();
+            drawableTexture.SetPixels(clean_colours_array);
+            drawableTexture.Apply();
         }
 
         void Awake()
         {
             drawable = this;
-            current_brush = PenBrush;
+            drawableSprite = this.GetComponent<SpriteRenderer>().sprite;
+            drawableTexture = drawableSprite.texture;
+            drawingTextureColors = drawingTexture.GetPixels32();
 
-            drawable_sprite = this.GetComponent<SpriteRenderer>().sprite;
-            drawable_texture = drawable_sprite.texture;
-
-            clean_colours_array = new Color[(int)drawable_sprite.rect.width * (int)drawable_sprite.rect.height];
+            clean_colours_array = new Color[(int)drawableSprite.rect.width * (int)drawableSprite.rect.height];
             for (int x = 0; x < clean_colours_array.Length; x++)
                 clean_colours_array[x] = Reset_Colour;
 
