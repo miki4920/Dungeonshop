@@ -1,15 +1,15 @@
 #pragma kernel Update
 #pragma kernel InitBackground
 
-RWTexture2D<float4> _Canvas;
-float _CanvasWidth;
-float _CanvasHeight;
+RWTexture2D<float4> canvas;
+float canvasWidth;
+float canvasHeight;
 float4 _PreviousMousePosition;
 float4 _MousePosition;
 float _StrokeSmoothingInterval;
 bool _MouseDown;
 float _BrushSize;
-Texture2D<float4> _BrushColour;
+Texture2D<float4> brushColor;
 
 float4 HardBrush(float2 pixelPos, float4 currentColor, Texture2D brushColor, float brushSize, float2 previousMousePosition,
                  float2 mousePosition, float strokeSmoothingInterval)
@@ -18,7 +18,7 @@ float4 HardBrush(float2 pixelPos, float4 currentColor, Texture2D brushColor, flo
     {
         const float2 mousePos = lerp(previousMousePosition, mousePosition, i);
         if (length(pixelPos - mousePos) < brushSize)
-            return _BrushColour[pixelPos];
+            return brushColor[pixelPos];
     }
 
     return currentColor;
@@ -27,21 +27,17 @@ float4 HardBrush(float2 pixelPos, float4 currentColor, Texture2D brushColor, flo
 [numthreads(8,8,1)]
 void InitBackground(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x >= _CanvasWidth || id.y >= _CanvasHeight)
+    if (id.x >= canvasWidth || id.y >= canvasHeight)
         return;
-
-    _Canvas[id.xy] = _BrushColour[id.xy];
+    float4 brushTexture = brushColor[id.xy];
+    canvas[id.xy] = float4(brushTexture.x, brushTexture.y, brushTexture.z, 0);
 }
 
 [numthreads(8,8,1)]
 void Update(uint3 id : SV_DispatchThreadID)
 {
-    if (!_MouseDown)
+    if (id.x >= canvasWidth || id.y >= canvasHeight)
         return;
-
-    if (id.x >= _CanvasWidth || id.y >= _CanvasHeight)
-        return;
-
-    _Canvas[id.xy] = HardBrush(id.xy, _Canvas[id.xy], _BrushColour, _BrushSize,
+    canvas[id.xy] = HardBrush(id.xy, canvas[id.xy], brushColor, _BrushSize,
                                _PreviousMousePosition, _MousePosition, _StrokeSmoothingInterval);
 }
