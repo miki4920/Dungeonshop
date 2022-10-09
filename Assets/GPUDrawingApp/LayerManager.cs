@@ -20,9 +20,10 @@ namespace Dungeonshop
             else
             {
                 Instance = this;
+                layers.Add(new Layer(Dungeonshop.BackgroundManager.createBlankRenderTexture()));
+                layers.Add(new Layer(Dungeonshop.BackgroundManager.createBlankRenderTexture()));
+                layers.Add(new Layer(Dungeonshop.BackgroundManager.createBlankRenderTexture()));
                 layer = 0;
-                layers.Add(new Layer(Dungeonshop.BackgroundManager.createBlankRenderTexture()));
-                layers.Add(new Layer(Dungeonshop.BackgroundManager.createBlankRenderTexture()));
             }
         }
 
@@ -33,7 +34,7 @@ namespace Dungeonshop
         
         public Layer getCurrentLayer()
         {
-            return layers[1];
+            return layers[layer];
         }
     }
 }
