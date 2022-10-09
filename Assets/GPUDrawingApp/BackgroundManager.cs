@@ -26,13 +26,13 @@ namespace Dungeonshop
 
         void Start()
         {
-            canvasLayer = Dungeonshop.LayerManager.instance.getCurrentLayer().background;
+            canvasLayer = Dungeonshop.LayerManager.Instance.getCurrentLayer().background;
             brushSlider.slider.SetValueWithoutNotify(brushSize);
             int initBackgroundKernel = drawShader.FindKernel("InitBackground");
-            drawShader.SetVector("_BackgroundColour", backgroundColor);
             drawShader.SetTexture(initBackgroundKernel, "_Canvas", canvasLayer);
             drawShader.SetFloat("_CanvasWidth", canvasLayer.width);
             drawShader.SetFloat("_CanvasHeight", canvasLayer.height);
+            drawShader.SetTexture(initBackgroundKernel, "_BrushColour", brushColor);
             drawShader.GetKernelThreadGroupSizes(initBackgroundKernel,
                 out uint xGroupSize, out uint yGroupSize, out _);
             drawShader.Dispatch(initBackgroundKernel,
@@ -50,7 +50,7 @@ namespace Dungeonshop
 
         void Update()
         {
-            canvasLayer = Dungeonshop.LayerManager.instance.getCurrentLayer().background;
+            canvasLayer = Dungeonshop.LayerManager.Instance.getCurrentLayer().background;
             if (!brushSlider.isInUse && Input.GetMouseButton(0))
             {
                 int updateKernel = drawShader.FindKernel("Update");

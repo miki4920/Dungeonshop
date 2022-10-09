@@ -10,7 +10,6 @@ float _StrokeSmoothingInterval;
 bool _MouseDown;
 float _BrushSize;
 Texture2D<float4> _BrushColour;
-float4 _BackgroundColour;
 
 float4 HardBrush(float2 pixelPos, float4 currentColor, Texture2D brushColor, float brushSize, float2 previousMousePosition,
                  float2 mousePosition, float strokeSmoothingInterval)
@@ -31,7 +30,7 @@ void InitBackground(uint3 id : SV_DispatchThreadID)
     if (id.x >= _CanvasWidth || id.y >= _CanvasHeight)
         return;
 
-    _Canvas[id.xy] = _BackgroundColour;
+    _Canvas[id.xy] = _BrushColour[id.xy];
 }
 
 [numthreads(8,8,1)]

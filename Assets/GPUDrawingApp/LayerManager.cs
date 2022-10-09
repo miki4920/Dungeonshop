@@ -7,9 +7,8 @@ namespace Dungeonshop
 {
     public class LayerManager : MonoBehaviour
     {
-        public static LayerManager instance;
-        List<Layer> layers = new List<Layer>();
-        Layer currentLayer;
+        public static LayerManager Instance;
+        public List<Layer> layers = new List<Layer>();
         [SerializeField] public int layer;
 
         private void Awake()
@@ -21,20 +20,20 @@ namespace Dungeonshop
             else
             {
                 Instance = this;
+                layer = 0;
+                layers.Add(new Layer(Dungeonshop.BackgroundManager.createBlankRenderTexture()));
+                layers.Add(new Layer(Dungeonshop.BackgroundManager.createBlankRenderTexture()));
             }
         }
 
         void Start()
         {
-            currentLayer = Dungeonshop.BackgroundManager.createBlankRenderTexture();
-            layer = 0;
-            layers.Add(currentLayer);
-            layers.Add(Dungeonshop.BackgroundManager.createBlankRenderTexture());
+            
         }
         
         public Layer getCurrentLayer()
         {
-            return layers[currentLayer];
+            return layers[1];
         }
     }
 }
