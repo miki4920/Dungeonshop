@@ -23,6 +23,8 @@ namespace Dungeonshop
                 layers.Add(new Layer(Dungeonshop.BackgroundManager.createBlankRenderTexture()));
                 layers.Add(new Layer(Dungeonshop.BackgroundManager.createBlankRenderTexture()));
                 layers.Add(new Layer(Dungeonshop.BackgroundManager.createBlankRenderTexture()));
+                layers.Add(new Layer(Dungeonshop.BackgroundManager.createBlankRenderTexture()));
+                layers.Add(new Layer(Dungeonshop.BackgroundManager.createBlankRenderTexture()));
                 layer = 0;
             }
         }
