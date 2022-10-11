@@ -1,6 +1,6 @@
 #pragma kernel Update
 #pragma kernel ApplyTexture
-#pragma kernel ApplyTextureTransparent
+#pragma kernel ApplyWhiteTexture
 
 RWTexture2D<float4> canvas;
 float canvasWidth;
@@ -9,16 +9,17 @@ float4 previousMousePosition;
 float4 mousePosition;
 float strokeSmoothingInterval;
 float brushSize;
+float opacity;
 Texture2D<float4> overlayTexture;
 
 float4 HardBrush(float2 pixelPos, float4 currentColor, Texture2D overlayTexture, float brushSize, float2 previousMousePosition,
                  float2 mousePosition, float strokeSmoothingInterval)
-{
+{  
     for (float i = 0; i < 1.0; i += strokeSmoothingInterval)
     {
         const float2 mousePos = lerp(previousMousePosition, mousePosition, i);
         if (length(pixelPos - mousePos) < brushSize)
-            return overlayTexture[pixelPos];
+            return float4(overlayTexture[pixelPos].r, overlayTexture[pixelPos].g, overlayTexture[pixelPos].b, overlayTexture[pixelPos].a);
     }
 
     return currentColor;
@@ -27,27 +28,19 @@ float4 HardBrush(float2 pixelPos, float4 currentColor, Texture2D overlayTexture,
 [numthreads(8,8,1)]
 void ApplyTexture(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x >= canvasWidth || id.y >= canvasHeight)
-        return;
-
-    canvas[id.xy] = lerp(canvas[id.xy], overlayTexture[id.xy], overlayTexture[id.xy].a);
+    canvas[id.xy].rgba = lerp(canvas[id.xy], overlayTexture[id.xy], overlayTexture[id.xy].a);
 }
 
 [numthreads(8,8,1)]
-void ApplyTextureTransparent(uint3 id : SV_DispatchThreadID)
+void ApplyWhiteTexture(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x >= canvasWidth || id.y >= canvasHeight)
-        return;
-    float4 transparentTexture = overlayTexture[id.xy];
-    canvas[id.xy] = float4(transparentTexture.r, transparentTexture.g, transparentTexture.b, 0);
+    canvas[id.xy].rgba = float4(255, 255, 255, opacity);
 }
 
 
 [numthreads(8,8,1)]
 void Update(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x >= canvasWidth || id.y >= canvasHeight)
-        return;
-    canvas[id.xy] = HardBrush(id.xy, canvas[id.xy], overlayTexture, brushSize,
+    canvas[id.xy].rgba = HardBrush(id.xy, canvas[id.xy], overlayTexture, brushSize,
                                previousMousePosition, mousePosition, strokeSmoothingInterval);
 }
