@@ -11,9 +11,10 @@ namespace Dungeonshop
         [SerializeField] Texture2D brushColor;
         [SerializeField, Range(1, 1000)] float brushSize = 10f;
         [SerializeField, Range(0.01f, 1)] float interpolationInterval = 0.01f;
-        [SerializeField, Range(0, 1)] float opacity = 1;
+        [SerializeField, Range(0, 1)] float brushOpacity = 1;
         Vector4 previousMousePosition;
         RenderTexture canvasLayer;
+        RenderTexture maskLayer;
 
         public static RenderTexture createBlankRenderTexture()
         {
@@ -56,7 +57,8 @@ namespace Dungeonshop
         void Start()
         {
             canvasLayer = createBlankRenderTexture();
-            
+            maskLayer = createBlankRenderTexture();
+            applyWhiteTexture(maskLayer, 0);
             for (int i = 0; i < Dungeonshop.LayerManager.Instance.layers.Count; i++)
             {
                 Layer layer = Dungeonshop.LayerManager.Instance.layers[i];
@@ -88,12 +90,10 @@ namespace Dungeonshop
                     break;
                 }
             }
-
         }
 
         void Update()
         {
-            previousMousePosition = Input.mousePosition;
             uniteLayers();
             if (Input.GetMouseButton(0))
             {
@@ -107,8 +107,7 @@ namespace Dungeonshop
                 drawShader.SetTexture(kernel, "canvas", layer);
                 drawShader.SetFloat("canvasWidth", layer.width);
                 drawShader.SetFloat("canvasHeight", layer.height);
-                // TODO: Create a layer on the first input till button up
-                drawShader.SetFloat("opacity", opacity);
+                drawShader.SetFloat("brushOpacity", brushOpacity);
                 drawShader.GetKernelThreadGroupSizes(kernel,
                     out uint xGroupSize, out uint yGroupSize, out _);
                 drawShader.Dispatch(kernel,
@@ -116,10 +115,7 @@ namespace Dungeonshop
                     Mathf.CeilToInt(layer.height / (float)yGroupSize),
                     1);
             }
-            
-
-
-
+            previousMousePosition = Input.mousePosition;
         }
 
         void OnRenderImage(RenderTexture src, RenderTexture dest)

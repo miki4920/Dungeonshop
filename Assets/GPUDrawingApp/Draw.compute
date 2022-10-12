@@ -10,17 +10,18 @@ float4 previousMousePosition;
 float4 mousePosition;
 float strokeSmoothingInterval;
 float brushSize;
+float brushOpacity;
 float opacity;
 Texture2D<float4> overlayTexture;
 
-float4 HardBrush(float2 pixelPos, float4 currentColor, Texture2D overlayTexture, float brushSize, float2 previousMousePosition,
+float4 HardBrush(float2 pixelPos, float4 currentColor, Texture2D overlayTexture, float brushSize, float brushOpacity, float2 previousMousePosition,
                  float2 mousePosition, float strokeSmoothingInterval)
 {  
     for (float i = 0; i < 1.0; i += strokeSmoothingInterval)
     {
         const float2 mousePos = lerp(previousMousePosition, mousePosition, i);
         if (length(pixelPos - mousePos) < brushSize)
-            return float4(overlayTexture[pixelPos].r, overlayTexture[pixelPos].g, overlayTexture[pixelPos].b, overlayTexture[pixelPos].a);
+            return (currentColor + float4(overlayTexture[pixelPos].r, overlayTexture[pixelPos].g, overlayTexture[pixelPos].b, overlayTexture[pixelPos].a * brushOpacity)) / (currentColor.a + overlayTexture[pixelPos].a * brushOpacity);
     }
 
     return currentColor;
@@ -42,9 +43,7 @@ void ApplyWhiteTexture(uint3 id : SV_DispatchThreadID)
 [numthreads(8,8,1)]
 void Update(uint3 id : SV_DispatchThreadID)
 {
-
-    float4 brushPixel = HardBrush(id.xy, canvas[id.xy], overlayTexture, brushSize,
+    canvas[id.xy].rgba = HardBrush(id.xy, canvas[id.xy], overlayTexture, brushSize, brushOpacity, 
                                previousMousePosition, mousePosition, strokeSmoothingInterval);
-    canvas[id.xy].rgba = lerp(canvas[id.xy], brushPixel, opacity);
 
 }
