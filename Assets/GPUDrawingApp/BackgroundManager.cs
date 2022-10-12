@@ -11,6 +11,7 @@ namespace Dungeonshop
         [SerializeField] Texture2D brushColor;
         [SerializeField, Range(1, 1000)] float brushSize = 10f;
         [SerializeField, Range(0.01f, 1)] float interpolationInterval = 0.01f;
+        [SerializeField, Range(0, 1)] float opacity = 1;
         Vector4 previousMousePosition;
         RenderTexture canvasLayer;
 
@@ -99,6 +100,8 @@ namespace Dungeonshop
                 drawShader.SetTexture(kernel, "canvas", layer);
                 drawShader.SetFloat("canvasWidth", layer.width);
                 drawShader.SetFloat("canvasHeight", layer.height);
+                // TODO: Create a layer on the first input till button up
+                drawShader.SetFloat("opacity", opacity);
                 drawShader.GetKernelThreadGroupSizes(kernel,
                     out uint xGroupSize, out uint yGroupSize, out _);
                 drawShader.Dispatch(kernel,
