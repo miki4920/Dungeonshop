@@ -38,10 +38,25 @@ namespace Dungeonshop
                 1);
         }
 
+        void applyWhiteTexture(RenderTexture layer, int opacity)
+        {
+            int kernel = drawShader.FindKernel("ApplyWhiteTexture");
+            drawShader.SetTexture(kernel, "canvas", layer);
+            drawShader.SetFloat("canvasWidth", layer.width);
+            drawShader.SetFloat("canvasHeight", layer.height);
+            drawShader.SetFloat("opacity", opacity);
+            drawShader.GetKernelThreadGroupSizes(kernel,
+                out uint xGroupSize, out uint yGroupSize, out _);
+            drawShader.Dispatch(kernel,
+                Mathf.CeilToInt(layer.width / (float)xGroupSize),
+                Mathf.CeilToInt(layer.height / (float)yGroupSize),
+                1);
+        }
+
         void Start()
         {
             canvasLayer = createBlankRenderTexture();
-            int kernel = drawShader.FindKernel("ApplyWhiteTexture");
+            
             for (int i = 0; i < Dungeonshop.LayerManager.Instance.layers.Count; i++)
             {
                 Layer layer = Dungeonshop.LayerManager.Instance.layers[i];
@@ -54,16 +69,8 @@ namespace Dungeonshop
                 {
                     opacity = 0;
                 }
-                drawShader.SetTexture(kernel, "canvas", layer.background);
-                drawShader.SetFloat("canvasWidth", layer.background.width);
-                drawShader.SetFloat("canvasHeight", layer.background.height);
-                drawShader.SetFloat("opacity", opacity);
-                drawShader.GetKernelThreadGroupSizes(kernel,
-                    out uint xGroupSize, out uint yGroupSize, out _);
-                drawShader.Dispatch(kernel,
-                    Mathf.CeilToInt(layer.background.width / (float)xGroupSize),
-                    Mathf.CeilToInt(layer.background.height / (float)yGroupSize),
-                    1);
+                applyWhiteTexture(layer.background, opacity);
+                
             }
             previousMousePosition = Input.mousePosition;
         }
