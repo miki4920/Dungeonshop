@@ -11,7 +11,7 @@ namespace Dungeonshop
         [SerializeField] Texture2D brushColor;
         [SerializeField, Range(1, 1000)] float brushSize = 10f;
         [SerializeField, Range(0.01f, 1)] float interpolationInterval = 0.01f;
-        [SerializeField, Range(0, 1)] float brushOpacity = 1;
+        [SerializeField, Range(0.01f, 1)] float brushOpacity = 1;
         Vector4 previousMousePosition;
         RenderTexture canvasLayer;
         RenderTexture maskLayer;

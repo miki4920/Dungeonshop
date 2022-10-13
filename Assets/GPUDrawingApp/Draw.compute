@@ -21,7 +21,7 @@ float4 HardBrush(float2 pixelPos, float4 currentColor, Texture2D overlayTexture,
     {
         const float2 mousePos = lerp(previousMousePosition, mousePosition, i);
         if (length(pixelPos - mousePos) < brushSize)
-            return (currentColor + float4(overlayTexture[pixelPos].r, overlayTexture[pixelPos].g, overlayTexture[pixelPos].b, overlayTexture[pixelPos].a * brushOpacity)) / (currentColor.a + overlayTexture[pixelPos].a * brushOpacity);
+            return lerp(currentColor, overlayTexture[pixelPos], brushOpacity);
     }
 
     return currentColor;
