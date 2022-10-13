@@ -104,16 +104,24 @@ namespace Dungeonshop
                 drawShader.SetFloat("brushSize", brushSize);
                 drawShader.SetTexture(kernel, "overlayTexture", brushColor);
                 drawShader.SetFloat("strokeSmoothingInterval", interpolationInterval);
-                drawShader.SetTexture(kernel, "canvas", layer);
-                drawShader.SetFloat("canvasWidth", layer.width);
-                drawShader.SetFloat("canvasHeight", layer.height);
+                drawShader.SetTexture(kernel, "canvas", maskLayer);
+                drawShader.SetTexture(kernel, "originalLayer", layer);
+                drawShader.SetFloat("canvasWidth", maskLayer.width);
+                drawShader.SetFloat("canvasHeight", maskLayer.height);
                 drawShader.SetFloat("brushOpacity", brushOpacity);
                 drawShader.GetKernelThreadGroupSizes(kernel,
                     out uint xGroupSize, out uint yGroupSize, out _);
                 drawShader.Dispatch(kernel,
-                    Mathf.CeilToInt(layer.width / (float)xGroupSize),
-                    Mathf.CeilToInt(layer.height / (float)yGroupSize),
+                    Mathf.CeilToInt(maskLayer.width / (float)xGroupSize),
+                    Mathf.CeilToInt(maskLayer.height / (float)yGroupSize),
                     1);
+                applyTexture(canvasLayer, maskLayer, drawShader.FindKernel("ApplyTexture"));
+            }
+            else
+            {
+                int kernel = drawShader.FindKernel("ApplyTexture");
+                applyTexture(Dungeonshop.LayerManager.Instance.getCurrentLayer().background, maskLayer, kernel);
+                applyWhiteTexture(maskLayer, 0);
             }
             previousMousePosition = Input.mousePosition;
         }

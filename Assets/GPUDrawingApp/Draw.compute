@@ -3,7 +3,7 @@
 #pragma kernel ApplyWhiteTexture
 
 RWTexture2D<float4> canvas;
-RWTexture2D<float4> drawingMask;
+RWTexture2D<float4> originalLayer;
 float canvasWidth;
 float canvasHeight;
 float4 previousMousePosition;
@@ -21,7 +21,7 @@ float4 HardBrush(float2 pixelPos, float4 currentColor, Texture2D overlayTexture,
     {
         const float2 mousePos = lerp(previousMousePosition, mousePosition, i);
         if (length(pixelPos - mousePos) < brushSize)
-            return lerp(currentColor, overlayTexture[pixelPos], brushOpacity);
+            return lerp(originalLayer[pixelPos], overlayTexture[pixelPos], brushOpacity);
     }
 
     return currentColor;
@@ -42,8 +42,8 @@ void ApplyWhiteTexture(uint3 id : SV_DispatchThreadID)
 
 [numthreads(8,8,1)]
 void Update(uint3 id : SV_DispatchThreadID)
-{
-    canvas[id.xy].rgba = HardBrush(id.xy, canvas[id.xy], overlayTexture, brushSize, brushOpacity, 
+{   
+    float4 brushPixel = HardBrush(id.xy, canvas[id.xy], overlayTexture, brushSize, brushOpacity, 
                                previousMousePosition, mousePosition, strokeSmoothingInterval);
-
+    canvas[id.xy].rgba = brushPixel;
 }
