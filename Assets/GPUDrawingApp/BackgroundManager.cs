@@ -15,6 +15,7 @@ namespace Dungeonshop
         [SerializeField, Range(0.01f, 1)] float brushOpacity = 1;
         Vector4 previousMousePosition;
         RenderTexture canvasLayer;
+        RenderTexture displayLayer;
         RenderTexture maskLayer;
 
         public static RenderTexture createBlankRenderTexture()
@@ -26,38 +27,44 @@ namespace Dungeonshop
             return blankLayer;
         }
 
-        void applyTexture(RenderTexture layer, RenderTexture overlayLayer, int kernel)
+        void dispatchShader(RenderTexture layer, int kernel)
         {
-            drawShader.SetTexture(kernel, "canvas", layer);
-            drawShader.SetTexture(kernel, "overlayTexture", overlayLayer);
-            drawShader.SetFloat("canvasWidth", layer.width);
-            drawShader.SetFloat("canvasHeight", layer.height);
             drawShader.GetKernelThreadGroupSizes(kernel,
                 out uint xGroupSize, out uint yGroupSize, out _);
             drawShader.Dispatch(kernel,
                 Mathf.CeilToInt(layer.width / (float)xGroupSize),
                 Mathf.CeilToInt(layer.height / (float)yGroupSize),
                 1);
+        }
+
+        void applyTexture(RenderTexture layer, RenderTexture overlayLayer)
+        {
+            int kernel = drawShader.FindKernel("ApplyTexture");
+            drawShader.SetTexture(kernel, "canvas", layer);
+            drawShader.SetTexture(kernel, "overlayTexture", overlayLayer);
+            dispatchShader(layer, kernel);
+        }
+
+        void applyTextureWithNoLerp(RenderTexture layer, RenderTexture overlayLayer)
+        {
+            int kernel = drawShader.FindKernel("ApplyTextureWithNoLerp");
+            drawShader.SetTexture(kernel, "canvas", layer);
+            drawShader.SetTexture(kernel, "overlayTexture", overlayLayer);
+            dispatchShader(layer, kernel);
         }
 
         void applyWhiteTexture(RenderTexture layer, int opacity)
         {
             int kernel = drawShader.FindKernel("ApplyWhiteTexture");
             drawShader.SetTexture(kernel, "canvas", layer);
-            drawShader.SetFloat("canvasWidth", layer.width);
-            drawShader.SetFloat("canvasHeight", layer.height);
             drawShader.SetFloat("opacity", opacity);
-            drawShader.GetKernelThreadGroupSizes(kernel,
-                out uint xGroupSize, out uint yGroupSize, out _);
-            drawShader.Dispatch(kernel,
-                Mathf.CeilToInt(layer.width / (float)xGroupSize),
-                Mathf.CeilToInt(layer.height / (float)yGroupSize),
-                1);
+            dispatchShader(layer, kernel);
         }
 
         void Start()
         {
             canvasLayer = createBlankRenderTexture();
+            displayLayer = createBlankRenderTexture();
             maskLayer = createBlankRenderTexture();
             applyWhiteTexture(maskLayer, 0);
             for (int i = 0; i < Dungeonshop.LayerManager.Instance.layers.Count; i++)
@@ -81,11 +88,10 @@ namespace Dungeonshop
 
         void uniteLayers()
         {
-            int kernel = drawShader.FindKernel("ApplyTexture");
             for (int i = 0; i <= Dungeonshop.LayerManager.Instance.layer; i++)
             {
                 Layer layer = Dungeonshop.LayerManager.Instance.layers[i];
-                applyTexture(canvasLayer, layer.background, kernel);
+                applyTexture(canvasLayer, layer.background);
                 if (i == Dungeonshop.LayerManager.Instance.layer)
                 {
                     break;
@@ -96,6 +102,7 @@ namespace Dungeonshop
         void Update()
         {
             uniteLayers();
+            applyTextureWithNoLerp(displayLayer, canvasLayer);
             if (Input.GetMouseButton(0))
             {
                 RenderTexture layer = Dungeonshop.LayerManager.Instance.getCurrentLayer().background;
@@ -106,30 +113,23 @@ namespace Dungeonshop
                 drawShader.SetTexture(kernel, "overlayTexture", brushColor);
                 drawShader.SetFloat("strokeSmoothingInterval", interpolationInterval);
                 drawShader.SetTexture(kernel, "canvas", maskLayer);
-                drawShader.SetTexture(kernel, "originalLayer", layer);
-                drawShader.SetFloat("canvasWidth", maskLayer.width);
-                drawShader.SetFloat("canvasHeight", maskLayer.height);
+                drawShader.SetTexture(kernel, "originalLayer", canvasLayer);
                 drawShader.SetFloat("brushOpacity", brushOpacity);
-                drawShader.GetKernelThreadGroupSizes(kernel,
-                    out uint xGroupSize, out uint yGroupSize, out _);
-                drawShader.Dispatch(kernel,
-                    Mathf.CeilToInt(maskLayer.width / (float)xGroupSize),
-                    Mathf.CeilToInt(maskLayer.height / (float)yGroupSize),
-                    1);
-                applyTexture(canvasLayer, maskLayer, drawShader.FindKernel("ApplyTexture"));
+                dispatchShader(layer, kernel);
+                applyTexture(displayLayer, maskLayer);
             }
             else
             {
-                int kernel = drawShader.FindKernel("ApplyTexture");
-                applyTexture(Dungeonshop.LayerManager.Instance.getCurrentLayer().background, maskLayer, kernel);
+                applyTextureWithNoLerp(Dungeonshop.LayerManager.Instance.getCurrentLayer().background, maskLayer);
                 applyWhiteTexture(maskLayer, 0);
             }
+            
             previousMousePosition = Input.mousePosition;
         }
 
         void OnRenderImage(RenderTexture src, RenderTexture dest)
         {
-            Graphics.Blit(canvasLayer, dest);
+            Graphics.Blit(displayLayer, dest);
         }
     }
 }
