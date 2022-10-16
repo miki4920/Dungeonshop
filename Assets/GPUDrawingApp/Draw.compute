@@ -1,11 +1,11 @@
-#pragma kernel Update
 #pragma kernel ApplyTexture
 #pragma kernel ApplyWhiteTexture
+#pragma kernel ApplyTextureWithNoLerp
+#pragma kernel Update
+
 
 RWTexture2D<float4> canvas;
 RWTexture2D<float4> originalLayer;
-float canvasWidth;
-float canvasHeight;
 float4 previousMousePosition;
 float4 mousePosition;
 float strokeSmoothingInterval;
@@ -34,11 +34,16 @@ void ApplyTexture(uint3 id : SV_DispatchThreadID)
 }
 
 [numthreads(8,8,1)]
+void ApplyTextureWithNoLerp(uint3 id : SV_DispatchThreadID)
+{
+    canvas[id.xy].rgba = overlayTexture[id.xy];
+}
+
+[numthreads(8,8,1)]
 void ApplyWhiteTexture(uint3 id : SV_DispatchThreadID)
 {
     canvas[id.xy].rgba = float4(255, 255, 255, opacity);
 }
-
 
 [numthreads(8,8,1)]
 void Update(uint3 id : SV_DispatchThreadID)
