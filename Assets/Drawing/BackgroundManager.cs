@@ -10,9 +10,9 @@ namespace Dungeonshop
     {
         [SerializeField] ComputeShader drawShader;
         [SerializeField] Texture2D brushColor;
-        [SerializeField, Range(1, 1000)] float brushSize = 10f;
+        float brushSize = 10f;
         [SerializeField, Range(0.01f, 1)] float interpolationInterval = 0.01f;
-        [SerializeField, Range(0.01f, 1)] float brushOpacity = 1;
+        float brushOpacity = 1;
         Vector4 previousMousePosition;
         RenderTexture canvasLayer;
         RenderTexture displayLayer;
@@ -25,6 +25,16 @@ namespace Dungeonshop
             blankLayer.enableRandomWrite = true;
             blankLayer.Create();
             return blankLayer;
+        }
+        
+        public void setBrushSize(float size)
+        {
+            brushSize = size;
+        }
+
+        public void setBrushOpacity(float opacity)
+        {
+            brushOpacity = opacity/100;
         }
 
         void dispatchShader(RenderTexture layer, int kernel)
@@ -66,6 +76,7 @@ namespace Dungeonshop
             canvasLayer = createBlankRenderTexture();
             displayLayer = createBlankRenderTexture();
             maskLayer = createBlankRenderTexture();
+            gameObject.GetComponent<RawImage>().texture = displayLayer;
             applyWhiteTexture(maskLayer, 0);
             for (int i = 0; i < Dungeonshop.LayerManager.Instance.layers.Count; i++)
             {
@@ -123,13 +134,9 @@ namespace Dungeonshop
                 applyTextureWithNoLerp(Dungeonshop.LayerManager.Instance.getCurrentLayer().background, maskLayer);
                 applyWhiteTexture(maskLayer, 0);
             }
-            
             previousMousePosition = Input.mousePosition;
         }
 
-        void OnRenderImage(RenderTexture src, RenderTexture dest)
-        {
-            Graphics.Blit(displayLayer, dest);
-        }
+
     }
 }
