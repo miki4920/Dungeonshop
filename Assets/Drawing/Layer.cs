@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Dungeonshop
 {
-    public struct Layer
+    public class Layer
     {
         public RenderTexture background;
 

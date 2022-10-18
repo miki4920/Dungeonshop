@@ -103,10 +103,6 @@ namespace Dungeonshop
             {
                 Layer layer = Dungeonshop.LayerManager.Instance.layers[i];
                 applyTexture(canvasLayer, layer.background);
-                if (i == Dungeonshop.LayerManager.Instance.layer)
-                {
-                    break;
-                }
             }
         }
 
@@ -131,7 +127,7 @@ namespace Dungeonshop
             }
             else
             {
-                applyTextureWithNoLerp(Dungeonshop.LayerManager.Instance.getCurrentLayer().background, maskLayer);
+                applyTexture(Dungeonshop.LayerManager.Instance.getCurrentLayer().background, maskLayer);
                 applyWhiteTexture(maskLayer, 0);
             }
             previousMousePosition = Input.mousePosition;
