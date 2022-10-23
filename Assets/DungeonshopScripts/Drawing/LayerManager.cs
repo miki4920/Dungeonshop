@@ -20,20 +20,23 @@ namespace Dungeonshop
             else
             {
                 Instance = this;
-                this.layer = -1;
+                layer = -1;
             }
         }
 
-        public void createNewLayer()
+        public Layer createNewLayer()
         {
-            Layer blankLayer = new Layer(BackgroundManager.createBlankRenderTexture());
-            if(this.layer >= 0) {
-                layers.Insert(this.layer, blankLayer);
+            Layer blankLayer = new Layer(BackgroundManager.Instance.createBlankRenderTexture());
+            BackgroundManager.Instance.applyWhiteTexture(blankLayer.background, 0);
+            if (this.layer >= 0) {
+                layers.Insert(this.layer+1, blankLayer);
+                layer++;
             }
             else {
-                layers.Insert(0, blankLayer);
-                this.layer = 0;
+                layers.Add(blankLayer);
+                layer = 0;
             }
+            return blankLayer;
         }
 
         public void deleteLayer(int layer)
@@ -44,12 +47,20 @@ namespace Dungeonshop
                 this.layer = layers.Count - 1;
             }
         }
-
-        public void deleteCurrentLayer()
-        {
-            this.deleteLayer(this.layer);
-        }
         
+        public List<Layer> getVisibleLayers()
+        {
+            List<Layer> visibleLayers = new List<Layer>();
+            for (int i = 0; i <= this.layer; i++)
+            {
+                if(layers[i].visible)
+                {
+                    visibleLayers.Add(layers[i]);
+                }
+            }
+            return visibleLayers;
+        }
+
         public Layer getCurrentLayer()
         {
             if (layer >= 0)
