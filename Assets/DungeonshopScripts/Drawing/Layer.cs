@@ -7,21 +7,17 @@ namespace Dungeonshop
     public class Layer
     {
         public RenderTexture background;
-        bool visible = false;
+        public bool visible = false;
+
         public Layer(RenderTexture renderTexture)
         {
-            visible = true;
-            background = renderTexture;
+            this.visible = true;
+            this.background = renderTexture;
         }
 
-        public void makeVisible()
+        public void changeVisibility()
         {
-            visible = true;
-        }
-
-        public void makeInvisible()
-        {
-            visible = false;
+            visible = !visible;
         }
     }
 }
