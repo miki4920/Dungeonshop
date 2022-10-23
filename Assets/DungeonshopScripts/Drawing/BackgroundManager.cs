@@ -32,9 +32,9 @@ namespace Dungeonshop
             }
         }
 
-        public static RenderTexture createBlankRenderTexture()
+        public RenderTexture createBlankRenderTexture()
         {
-            RenderTexture blankLayer = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.ARGB32);
+            RenderTexture blankLayer = new RenderTexture(1536, Screen.height, 24, RenderTextureFormat.ARGB32);
             blankLayer.filterMode = FilterMode.Point;
             blankLayer.enableRandomWrite = true;
             blankLayer.Create();
@@ -61,7 +61,7 @@ namespace Dungeonshop
                 1);
         }
 
-        void applyTexture(RenderTexture layer, RenderTexture overlayLayer)
+        public void applyTexture(RenderTexture layer, RenderTexture overlayLayer)
         {
             int kernel = drawShader.FindKernel("ApplyTexture");
             drawShader.SetTexture(kernel, "canvas", layer);
@@ -69,7 +69,7 @@ namespace Dungeonshop
             dispatchShader(layer, kernel);
         }
 
-        void applyTextureWithNoLerp(RenderTexture layer, RenderTexture overlayLayer)
+        public void applyTextureWithNoLerp(RenderTexture layer, RenderTexture overlayLayer)
         {
             int kernel = drawShader.FindKernel("ApplyTextureWithNoLerp");
             drawShader.SetTexture(kernel, "canvas", layer);
@@ -77,7 +77,7 @@ namespace Dungeonshop
             dispatchShader(layer, kernel);
         }
 
-        void applyWhiteTexture(RenderTexture layer, int opacity)
+        public void applyWhiteTexture(RenderTexture layer, int opacity)
         {
             int kernel = drawShader.FindKernel("ApplyWhiteTexture");
             drawShader.SetTexture(kernel, "canvas", layer);
@@ -92,41 +92,27 @@ namespace Dungeonshop
             maskLayer = createBlankRenderTexture();
             gameObject.GetComponent<RawImage>().texture = displayLayer;
             applyWhiteTexture(maskLayer, 0);
-            for (int i = 0; i < Dungeonshop.LayerManager.Instance.layers.Count; i++)
-            {
-                Layer layer = Dungeonshop.LayerManager.Instance.layers[i];
-                int opacity;
-                if (i == 0)
-                {
-                    opacity = 1;
-                }
-                else
-                {
-                    opacity = 0;
-                }
-                applyWhiteTexture(layer.background, opacity);
-                
-            }
             previousMousePosition = Input.mousePosition;
         }
 
 
         void uniteLayers()
         {
-            for (int i = 0; i <= Dungeonshop.LayerManager.Instance.layer; i++)
+            applyWhiteTexture(canvasLayer, 1);
+            foreach (Layer layer in Dungeonshop.LayerManager.Instance.getVisibleLayers())
             {
-                Layer layer = Dungeonshop.LayerManager.Instance.layers[i];
                 applyTexture(canvasLayer, layer.background);
             }
         }
 
         void Update()
         {
-            if(Dungeonshop.LayerManager.Instance.getCurrentLayer() != null)
+            applyWhiteTexture(displayLayer, 0);
+            if(Dungeonshop.LayerManager.Instance.getVisibleLayers().Count > 0)
             {
                 uniteLayers();
                 applyTextureWithNoLerp(displayLayer, canvasLayer);
-                if (Input.GetMouseButton(0) && EventSystem.current.IsPointerOverGameObject())
+                if (Input.GetMouseButton(0))
                 {
                     RenderTexture layer = Dungeonshop.LayerManager.Instance.getCurrentLayer().background;
                     int kernel = drawShader.FindKernel("Update");
