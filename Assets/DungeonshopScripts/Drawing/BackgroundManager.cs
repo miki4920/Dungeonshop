@@ -13,7 +13,6 @@ namespace Dungeonshop
         [SerializeField] ComputeShader drawShader;
         [SerializeField] Texture2D brushColor;
         float brushSize = 10f;
-        [SerializeField, Range(0.01f, 1)] float interpolationInterval = 0.01f;
         float brushOpacity = 1;
         Vector4 previousMousePosition;
         RenderTexture canvasLayer;
@@ -120,7 +119,6 @@ namespace Dungeonshop
                     drawShader.SetVector("mousePosition", Dungeonshop.DrawingAreaInputHandler.Instance.mousePosition());
                     drawShader.SetFloat("brushSize", brushSize);
                     drawShader.SetTexture(kernel, "overlayTexture", brushColor);
-                    drawShader.SetFloat("strokeSmoothingInterval", interpolationInterval);
                     drawShader.SetTexture(kernel, "canvas", maskLayer);
                     drawShader.SetTexture(kernel, "originalLayer", canvasLayer);
                     drawShader.SetFloat("brushOpacity", brushOpacity);
