@@ -2,21 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Dungeonshop
+namespace Dungeonshop.UI
 {
     public class PanelView : MonoBehaviour
     {
-        [SerializeField] GameObject panel;
-        [SerializeField] GameObject viewControllerObject;
-        PanelManagerViewController viewController;
-        void Start()
-        {
-            viewController = viewControllerObject.GetComponent<PanelManagerViewController>();
-        }
+        [SerializeField] DrawingMode drawingMode;
 
         public void changePanel()
         {
-            viewController.changeActivePanel(panel);
+            Dungeonshop.UI.BrushSelectorManager.Instance.changeDrawingMode(drawingMode);
         }
     }
 }
