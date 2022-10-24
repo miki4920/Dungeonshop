@@ -34,7 +34,7 @@ namespace Dungeonshop
 
         public RenderTexture createBlankRenderTexture()
         {
-            RenderTexture blankLayer = new RenderTexture(1536, Screen.height, 24, RenderTextureFormat.ARGB32);
+            RenderTexture blankLayer = new RenderTexture(1152, Screen.height, 24, RenderTextureFormat.ARGB32);
             blankLayer.filterMode = FilterMode.Point;
             blankLayer.enableRandomWrite = true;
             blankLayer.Create();
@@ -112,12 +112,12 @@ namespace Dungeonshop
             {
                 uniteLayers();
                 applyTextureWithNoLerp(displayLayer, canvasLayer);
-                if (Input.GetMouseButton(0))
+                if (Input.GetMouseButton(0) && Dungeonshop.DrawingAreaInputHandler.Instance.isInsideDrawingArea())
                 {
                     RenderTexture layer = Dungeonshop.LayerManager.Instance.getCurrentLayer().background;
                     int kernel = drawShader.FindKernel("Update");
                     drawShader.SetVector("previousMousePosition", previousMousePosition);
-                    drawShader.SetVector("mousePosition", Input.mousePosition);
+                    drawShader.SetVector("mousePosition", Dungeonshop.DrawingAreaInputHandler.Instance.mousePosition());
                     drawShader.SetFloat("brushSize", brushSize);
                     drawShader.SetTexture(kernel, "overlayTexture", brushColor);
                     drawShader.SetFloat("strokeSmoothingInterval", interpolationInterval);
@@ -132,7 +132,7 @@ namespace Dungeonshop
                     applyTexture(Dungeonshop.LayerManager.Instance.getCurrentLayer().background, maskLayer);
                     applyWhiteTexture(maskLayer, 0);
                 }
-                previousMousePosition = Input.mousePosition;
+                previousMousePosition = Dungeonshop.DrawingAreaInputHandler.Instance.mousePosition();
             }
             
         }
