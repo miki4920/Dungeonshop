@@ -9,7 +9,7 @@ namespace Dungeonshop
     {
         public static LayerManager Instance;
         public List<Layer> layers = new List<Layer>();
-        public int layer;
+        [HideInInspector] public int layer;
 
         private void Awake()
         {
