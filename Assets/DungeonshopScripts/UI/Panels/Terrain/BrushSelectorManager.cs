@@ -66,14 +66,14 @@ namespace Dungeonshop.UI
 
             opacitySlider.onValueChanged.AddListener(delegate
             {
-                opacityDictionary[drawingMode] = opacitySlider.value;
+                opacityDictionary[drawingMode] = opacitySlider.value/100;
             });
         }
 
         public void setSliders()
         {
             sizeSlider.SetValueWithoutNotify(sizeDictionary[drawingMode]);
-            opacitySlider.SetValueWithoutNotify(opacityDictionary[drawingMode]);
+            opacitySlider.SetValueWithoutNotify(opacityDictionary[drawingMode]*100);
         }
 
         public void changeDrawingMode(DrawingMode newDrawingMode)
