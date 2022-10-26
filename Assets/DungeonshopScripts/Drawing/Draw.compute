@@ -9,7 +9,6 @@
 
 RWTexture2D<float4> canvas;
 RWTexture2D<float4> originalLayer;
-RWTexture2D<float4> maskLayer;
 float4 previousMousePosition;
 float4 mousePosition;
 float brushSize;
@@ -18,7 +17,7 @@ float opacity;
 float4 overlayColor;
 Texture2D<float4> overlayTexture;
 
-float4 BrushTexture(float2 pixelPos, float4 currentColor, Texture2D overlayTexture, float brushSize, float brushOpacity, float2 previousMousePosition,
+float4 BrushColor(float2 pixelPos, float4 currentColor, Texture2D overlayTexture, float brushSize, float brushOpacity, float2 previousMousePosition,
                  float2 mousePosition)
 {
 	for (float i = 0; i < 1.0; i += 0.01)
@@ -32,60 +31,10 @@ float4 BrushTexture(float2 pixelPos, float4 currentColor, Texture2D overlayTextu
 	return currentColor;
 }
 
-float4 BrushColor(float2 pixelPos, float4 currentColor, float4 overlayColor, float brushSize, float brushOpacity, float2 previousMousePosition,
-    float2 mousePosition)
-{
-	for (float i = 0; i < 1.0; i += 0.01)
-	{
-		const float2 mousePos = lerp(previousMousePosition, mousePosition, i);
-		if (length(pixelPos - mousePos) < brushSize)
-		{
-			return lerp(originalLayer[pixelPos], overlayColor, brushOpacity);
-		}
-	}
-	return currentColor;
-}
-
-float4 BrushEraser(float2 pixelPos, float4 currentColor, float brushSize, float brushOpacity, float2 previousMousePosition,
-    float2 mousePosition)
-{
-	for (float i = 0; i < 1.0; i += 0.01)
-	{
-		const float2 mousePos = lerp(previousMousePosition, mousePosition, i);
-		if (length(pixelPos - mousePos) < brushSize)
-		{
-			return float4(originalLayer[pixelPos].rgb, originalLayer[pixelPos].a * (1 - brushOpacity));
-
-		}
-	}
-	return currentColor;
-}
-
-float4 BrushMask(float2 pixelPos, float brushSize, float brushOpacity, float2 previousMousePosition,
-    float2 mousePosition)
-{
-	for (float i = 0; i < 1.0; i += 0.01)
-	{
-		const float2 mousePos = lerp(previousMousePosition, mousePosition, i);
-		if (length(pixelPos - mousePos) < brushSize)
-		{
-			return float4(1, 1, 1, brushOpacity);
-		}
-	}
-	return float4(1, 1, 1, canvas[pixelPos].a);
-}
-
 [numthreads(8, 8, 1)]
-
 void ApplyTexture(uint3 id : SV_DispatchThreadID)
 {
 	canvas[id.xy].rgba = lerp(canvas[id.xy], overlayTexture[id.xy], overlayTexture[id.xy].a);
-}
-
-[numthreads(8, 8, 1)] 
-void ApplyTextureWithNoLerp(uint3 id : SV_DispatchThreadID)
-{
-	canvas[id.xy].rgba = overlayTexture[id.xy];
 }
 
 [numthreads(8, 8, 1)]
@@ -99,25 +48,14 @@ void ApplyTextureBasedOnMask(uint3 id : SV_DispatchThreadID)
 {
 	if (maskLayer[id.xy].a > 0)
 	{
-		canvas[id.xy].rgba = float4(canvas[id.xy].rgb, canvas[id.xy].a * (1 - maskLayer[id.xy].a));
+		canvas[id.xy].rgba = float4(canvas[id.xy].rgb, canvas[id.xy].a * maskLayer[id.xy].a);
 	}
-}
-[numthreads(8, 8, 1)]
-void UpdateTexture(uint3 id : SV_DispatchThreadID)
-{
-	canvas[id.xy].rgba = BrushTexture(id.xy, canvas[id.xy], overlayTexture, brushSize, brushOpacity, previousMousePosition, mousePosition);
 }
 
 [numthreads(8, 8, 1)]
 void UpdateColor(uint3 id : SV_DispatchThreadID)
 {
 	canvas[id.xy].rgba = BrushColor(id.xy, canvas[id.xy], overlayColor, brushSize, brushOpacity, previousMousePosition, mousePosition);
-}
-
-[numthreads(8, 8, 1)]
-void UpdateEraser(uint3 id : SV_DispatchThreadID)
-{
-	canvas[id.xy].rgba = BrushEraser(id.xy, canvas[id.xy], brushSize, brushOpacity, previousMousePosition, mousePosition);
 }
 
 [numthreads(8, 8, 1)]
