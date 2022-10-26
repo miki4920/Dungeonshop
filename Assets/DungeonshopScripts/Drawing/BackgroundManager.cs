@@ -16,6 +16,7 @@ namespace Dungeonshop
         RenderTexture canvasLayer;
         RenderTexture displayLayer;
         RenderTexture maskLayer;
+        RenderTexture eraserMaskLayer;
 
         private void Awake()
         {
@@ -56,6 +57,26 @@ namespace Dungeonshop
             dispatchShader(layer, kernel);
         }
 
+        public void applyTextureBasedOnMask()
+        {
+            int kernel = drawShader.FindKernel("UpdateMask");
+            drawShader.SetTexture(kernel, "canvas", eraserMaskLayer);
+            drawShader.SetVector("previousMousePosition", previousMousePosition);
+            drawShader.SetVector("mousePosition", Dungeonshop.DrawingAreaInputHandler.Instance.mousePosition());
+            drawShader.SetFloat("brushSize", Dungeonshop.UI.BrushSelectorManager.Instance.getSize());
+            drawShader.SetFloat("brushOpacity", Dungeonshop.UI.BrushSelectorManager.Instance.getOpacity());
+            dispatchShader(eraserMaskLayer, kernel);
+        }
+
+        public void applyTextureBasedOnMask2(RenderTexture layer, RenderTexture overlayLayer)
+        {
+            int kernel = drawShader.FindKernel("ApplyTextureBasedOnMask");
+            drawShader.SetTexture(kernel, "canvas", layer);
+            drawShader.SetTexture(kernel, "overlayTexture", overlayLayer);
+            drawShader.SetTexture(kernel, "maskLayer", eraserMaskLayer);
+            dispatchShader(layer, kernel);
+        }
+
         public void applyTextureWithNoLerp(RenderTexture layer, RenderTexture overlayLayer)
         {
             int kernel = drawShader.FindKernel("ApplyTextureWithNoLerp");
@@ -77,6 +98,8 @@ namespace Dungeonshop
             canvasLayer = createBlankRenderTexture();
             displayLayer = createBlankRenderTexture();
             maskLayer = createBlankRenderTexture();
+            eraserMaskLayer = createBlankRenderTexture();
+            applyWhiteTexture(eraserMaskLayer, 0);
             gameObject.GetComponent<RawImage>().texture = displayLayer;
             applyWhiteTexture(maskLayer, 0);
             previousMousePosition = Input.mousePosition;
@@ -98,7 +121,8 @@ namespace Dungeonshop
             if (Dungeonshop.LayerManager.Instance.getVisibleLayers().Count > 0)
             {
                 uniteLayers();
-                applyTextureWithNoLerp(displayLayer, canvasLayer);
+                applyWhiteTexture(displayLayer, 0);
+                applyTexture(displayLayer, canvasLayer);
                 if (Input.GetMouseButton(0) && Dungeonshop.DrawingAreaInputHandler.Instance.isInsideDrawingArea())
                 {
                     float size = Dungeonshop.UI.BrushSelectorManager.Instance.getSize();
@@ -124,7 +148,9 @@ namespace Dungeonshop
                             }
                         case DrawingMode.Eraser:
                             {
+                                applyTextureBasedOnMask();
                                 kernel = drawShader.FindKernel("UpdateEraser");
+                                drawShader.SetTexture(kernel, "originalLayer", canvasLayer);
                                 break;
                             }
                         default: break;
@@ -142,8 +168,16 @@ namespace Dungeonshop
                 }
                 else
                 {
-                    applyTexture(Dungeonshop.LayerManager.Instance.getCurrentLayer().background, maskLayer);
+                    if(Dungeonshop.UI.BrushSelectorManager.Instance.drawingMode != DrawingMode.Eraser)
+                    {
+                        applyTexture(Dungeonshop.LayerManager.Instance.getCurrentLayer().background, maskLayer);
+                    }
+                    else
+                    {
+                        applyTextureBasedOnMask2(Dungeonshop.LayerManager.Instance.getCurrentLayer().background, maskLayer);
+                    }
                     applyWhiteTexture(maskLayer, 0);
+                    applyWhiteTexture(eraserMaskLayer, 0);
                 }
                 previousMousePosition = Dungeonshop.DrawingAreaInputHandler.Instance.mousePosition();
             }
