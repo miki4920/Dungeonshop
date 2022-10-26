@@ -7,6 +7,7 @@ namespace Dungeonshop
     public class DrawingAreaInputHandler : MonoBehaviour
     {
         public static DrawingAreaInputHandler Instance;
+        public bool holdingOutsideDrawingArea;
         [SerializeField] RectTransform drawingAreaTransform;
         private void Awake()
         {
@@ -20,10 +21,30 @@ namespace Dungeonshop
             }
         }
 
+        private void Start()
+        {
+            holdingOutsideDrawingArea = false;
+        }
+
         public bool isInsideDrawingArea()
         {
             Vector3 drawingAreaPosition = drawingAreaTransform.position;
-            return Input.mousePosition.x <= Screen.width - drawingAreaPosition.x && Input.mousePosition.x >= drawingAreaPosition.x;
+            bool insideArea = Input.mousePosition.x <= Screen.width - drawingAreaPosition.x && Input.mousePosition.x >= drawingAreaPosition.x;
+            if (Input.GetMouseButton(0) && !insideArea)
+            {
+                holdingOutsideDrawingArea = true;
+                return false;
+            }
+            else if(holdingOutsideDrawingArea && insideArea && !Input.GetMouseButton(0))
+            {
+                holdingOutsideDrawingArea = false;
+                return false;
+            }
+            else if(Input.GetMouseButton(0) && insideArea && !holdingOutsideDrawingArea)
+            {
+                return true;
+            }
+            return false;
         }
 
         public Vector3 mousePosition()
