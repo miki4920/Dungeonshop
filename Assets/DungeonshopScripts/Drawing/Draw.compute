@@ -1,0 +1,97 @@
+#pragma kernel ApplyTexture
+#pragma kernel ApplyWhiteTexture
+#pragma kernel ApplyTextureWithNoLerp
+#pragma kernel UpdateTexture
+#pragma kernel UpdateColor
+#pragma kernel UpdateEraser
+
+RWTexture2D<float4> canvas;
+RWTexture2D<float4> originalLayer;
+float4 previousMousePosition;
+float4 mousePosition;
+float brushSize;
+float brushOpacity;
+float opacity;
+float4 overlayColor;
+Texture2D<float4> overlayTexture;
+
+float4 BrushTexture(float2 pixelPos, float4 currentColor, Texture2D overlayTexture, float brushSize, float brushOpacity, float2 previousMousePosition,
+                 float2 mousePosition)
+{  
+    for (float i = 0; i < 1.0; i += 0.01)
+    {
+        const float2 mousePos = lerp(previousMousePosition, mousePosition, i);
+        if (length(pixelPos - mousePos) < brushSize)
+            return lerp(originalLayer[pixelPos], overlayTexture[pixelPos], brushOpacity);
+    }
+
+    return currentColor;
+}
+
+float4 BrushColor(float2 pixelPos, float4 currentColor, float4 overlayColor, float brushSize, float brushOpacity, float2 previousMousePosition,
+    float2 mousePosition)
+{
+    for (float i = 0; i < 1.0; i += 0.01)
+    {
+        const float2 mousePos = lerp(previousMousePosition, mousePosition, i);
+        if (length(pixelPos - mousePos) < brushSize)
+            return lerp(originalLayer[pixelPos], overlayColor, brushOpacity);
+    }
+
+    return currentColor;
+}
+
+float4 BrushEraser(float2 pixelPos, float4 currentColor, float brushSize, float brushOpacity, float2 previousMousePosition,
+    float2 mousePosition)
+{
+    for (float i = 0; i < 1.0; i += 0.01)
+    {
+        const float2 mousePos = lerp(previousMousePosition, mousePosition, i);
+        if (length(pixelPos - mousePos) < brushSize)
+            return float4(255, 255, 255, brushOpacity);
+    }
+
+    return currentColor;
+}
+
+[numthreads(8,8,1)]
+void ApplyTexture(uint3 id : SV_DispatchThreadID)
+{
+    canvas[id.xy].rgba = lerp(canvas[id.xy], overlayTexture[id.xy], overlayTexture[id.xy].a);
+}
+
+[numthreads(8,8,1)]
+void ApplyTextureWithNoLerp(uint3 id : SV_DispatchThreadID)
+{
+    canvas[id.xy].rgba = overlayTexture[id.xy];
+}
+
+[numthreads(8,8,1)]
+void ApplyWhiteTexture(uint3 id : SV_DispatchThreadID)
+{
+    canvas[id.xy].rgba = float4(255, 255, 255, opacity);
+}
+
+[numthreads(8,8,1)]
+void UpdateTexture(uint3 id : SV_DispatchThreadID)
+{   
+    float4 brushPixel = BrushTexture(id.xy, canvas[id.xy], overlayTexture, brushSize, brushOpacity, 
+                               previousMousePosition, mousePosition);
+    canvas[id.xy].rgba = brushPixel;
+}
+
+[numthreads(8, 8, 1)]
+void UpdateColor(uint3 id : SV_DispatchThreadID)
+{
+    float4 brushPixel = BrushColor(id.xy, canvas[id.xy], overlayColor, brushSize, brushOpacity,
+        previousMousePosition, mousePosition);
+    canvas[id.xy].rgba = brushPixel;
+}
+
+[numthreads(8, 8, 1)]
+void UpdateEraser(uint3 id : SV_DispatchThreadID)
+{
+    float4 brushPixel = BrushEraser(id.xy, canvas[id.xy], brushSize, brushOpacity,
+        previousMousePosition, mousePosition);
+    canvas[id.xy].rgba = brushPixel;
+}
