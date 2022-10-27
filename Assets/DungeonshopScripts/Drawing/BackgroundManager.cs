@@ -42,19 +42,47 @@ namespace Dungeonshop
             canvasLayer = createBlankRenderTexture();
             displayLayer = createBlankRenderTexture();
             maskLayer = createBlankRenderTexture();
-            gameObject.GetComponent<RawImage>().texture = displayLayer;
+            gameObject.GetComponent<RawImage>().texture = canvasLayer;
             previousMousePosition = Input.mousePosition;
         }
 
 
         void uniteLayers()
         {
-            Dungeonshop.ShaderManager.Instance.applyTexture("ApplyWhiteTexture", canvasLayer, opacity: 0);
+            Dungeonshop.ShaderManager.Instance.applyTexture("ApplyWhiteTexture", canvasLayer, opacity: 1);
+            Dungeonshop.ShaderManager.Instance.applyTexture("ApplyWhiteTexture", displayLayer, opacity: 0);
+            Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTexture", displayLayer, overlayLayer: Dungeonshop.LayerManager.Instance.getCurrentLayer().background);
             foreach (Layer layer in Dungeonshop.LayerManager.Instance.getVisibleLayers())
             {
-                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTexture", canvasLayer, overlayLayer: layer.background);
+                
+                if (layer == Dungeonshop.LayerManager.Instance.getCurrentLayer())
+                {
+                    switch (Dungeonshop.UI.BrushSelectorManager.Instance.drawingMode)
+                    {
+
+                        case DrawingMode.Color:
+                            {
+                                break;
+                            }
+                        case DrawingMode.Texture:
+                            {
+                                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTextureBasedOnMask", displayLayer, overlayLayer: Dungeonshop.UI.BrushSelectorManager.Instance.texture, maskLayer: maskLayer);
+                                break;
+                            }
+                        case DrawingMode.Eraser:
+                            {
+                                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyEraserBasedOnMask", displayLayer, maskLayer: maskLayer);
+                                break;
+                            }
+                        default: break;
+                    }
+                    Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTexture", canvasLayer, overlayLayer: displayLayer);
+                }
+                else
+                {
+                    Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTexture", canvasLayer, overlayLayer: layer.background);
+                }
             }
-            Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTexture", displayLayer, overlayLayer: canvasLayer);
         }
 
         void Update()
@@ -67,27 +95,31 @@ namespace Dungeonshop
                     Vector3 mousePosition = Dungeonshop.DrawingAreaInputHandler.Instance.mousePosition();
                     float size = Dungeonshop.UI.BrushSelectorManager.Instance.getSize();
                     float opacity = Dungeonshop.UI.BrushSelectorManager.Instance.getOpacity();
+                    Dungeonshop.ShaderManager.Instance.applyTexture("UpdateMask", maskLayer, size: size, opacity: opacity, previousMousePosition: previousMousePosition, mousePosition: mousePosition);
+                }
+                else if(!Input.GetMouseButton(0))
+                {
                     RenderTexture layer = Dungeonshop.LayerManager.Instance.getCurrentLayer().background;
                     switch (Dungeonshop.UI.BrushSelectorManager.Instance.drawingMode)
                     {
+                        
                         case DrawingMode.Color:
                             {
                                 break;
                             }
                         case DrawingMode.Texture:
                             {
+                                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTextureBasedOnMask", layer, overlayLayer: Dungeonshop.UI.BrushSelectorManager.Instance.texture, maskLayer: maskLayer);
                                 break;
                             }
                         case DrawingMode.Eraser:
                             {
+                                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyEraserBasedOnMask", layer, maskLayer: maskLayer);
                                 break;
                             }
                         default: break;
-                    }             
-                }
-                else if(!Input.GetMouseButton(0))
-                {
-
+                    }
+                    Dungeonshop.ShaderManager.Instance.applyTexture("ApplyWhiteTexture", maskLayer, opacity: 0);
                 }
                 previousMousePosition = Dungeonshop.DrawingAreaInputHandler.Instance.mousePosition();
             }
