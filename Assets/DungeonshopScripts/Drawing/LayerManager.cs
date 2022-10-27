@@ -27,7 +27,6 @@ namespace Dungeonshop
         public Layer createNewLayer()
         {
             Layer blankLayer = new Layer(BackgroundManager.Instance.createBlankRenderTexture());
-            BackgroundManager.Instance.applyWhiteTexture(blankLayer.background, 0);
             if (this.layer >= 0) {
                 layers.Insert(this.layer+1, blankLayer);
                 layer++;
@@ -51,11 +50,11 @@ namespace Dungeonshop
         public List<Layer> getVisibleLayers()
         {
             List<Layer> visibleLayers = new List<Layer>();
-            for (int i = 0; i <= this.layer; i++)
+            foreach(Layer layer in this.layers)
             {
-                if(layers[i].visible)
+                if(layer.visible)
                 {
-                    visibleLayers.Add(layers[i]);
+                    visibleLayers.Add(layer);
                 }
             }
             return visibleLayers;
