@@ -30,21 +30,31 @@ namespace Dungeonshop
                 1);
         }
 
-        public void applyTexture(string kernelName, RenderTexture layer, RenderTexture overlayLayer = null, float opacity = 0, float size = 0, float previousMousePosition = 0, float mousePosition = 0, Color? overlayColor = null)
+        public void applyTexture(string kernelName, RenderTexture layer, Texture overlayLayer = null, RenderTexture maskLayer = null, float opacity = 0, float size = 0, Vector4? previousMousePosition = null, Vector4? mousePosition = null, Color? overlayColor = null)
         {
             int kernel = layerShader.FindKernel(kernelName);
             layerShader.SetTexture(kernel, "canvas", layer);
             layerShader.SetFloat("opacity", opacity);
             layerShader.SetFloat("size", size);
-            layerShader.SetFloat("previousMousePosition", previousMousePosition);
-            layerShader.SetFloat("mousePosition", mousePosition);
             if (overlayLayer != null)
             {
                 layerShader.SetTexture(kernel, "overlayTexture", overlayLayer);
             }
+            if (maskLayer != null)
+            {
+                layerShader.SetTexture(kernel, "mask", maskLayer);
+            }
             if (overlayColor != null)
             {
                 layerShader.SetVector("overlayColor", overlayColor.Value);
+            }
+            if(previousMousePosition != null)
+            {
+                layerShader.SetVector("previousMousePosition", previousMousePosition.Value);
+            }
+            if(mousePosition != null)
+            {
+                layerShader.SetVector("mousePosition", mousePosition.Value);
             }
             dispatchShader(layer, kernel);
         }
