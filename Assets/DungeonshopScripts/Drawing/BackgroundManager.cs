@@ -51,12 +51,12 @@ namespace Dungeonshop
         {
             Dungeonshop.ShaderManager.Instance.applyTexture("ApplyWhiteTexture", canvasLayer, opacity: 1);
             Dungeonshop.ShaderManager.Instance.applyTexture("ApplyWhiteTexture", displayLayer, opacity: 0);
-            Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTexture", displayLayer, overlayLayer: Dungeonshop.LayerManager.Instance.getCurrentLayer().background);
             foreach (Layer layer in Dungeonshop.LayerManager.Instance.getVisibleLayers())
             {
-                
                 if (layer == Dungeonshop.LayerManager.Instance.getCurrentLayer())
                 {
+                    Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTexture", displayLayer, overlayLayer: canvasLayer);
+                    Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTexture", displayLayer, overlayLayer: layer.background);
                     switch (Dungeonshop.UI.BrushSelectorManager.Instance.drawingMode)
                     {
 
@@ -87,9 +87,10 @@ namespace Dungeonshop
 
         void Update()
         {
+            uniteLayers();
             if (Dungeonshop.LayerManager.Instance.getVisibleLayers().Count > 0)
             {
-                uniteLayers();
+                
                 if (Dungeonshop.DrawingAreaInputHandler.Instance.isInsideDrawingArea())
                 {
                     Vector3 mousePosition = Dungeonshop.DrawingAreaInputHandler.Instance.mousePosition();
