@@ -62,6 +62,7 @@ namespace Dungeonshop
 
                         case DrawingMode.Color:
                             {
+                                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyColorBasedOnMask", displayLayer, overlayColor: Dungeonshop.UI.BrushSelectorManager.Instance.color, maskLayer: maskLayer);
                                 break;
                             }
                         case DrawingMode.Texture:
@@ -106,11 +107,12 @@ namespace Dungeonshop
                         
                         case DrawingMode.Color:
                             {
+                                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyColorBasedOnMask", layer, overlayLayer: Dungeonshop.UI.BrushSelectorManager.Instance.texture, maskLayer: maskLayer);
                                 break;
                             }
                         case DrawingMode.Texture:
                             {
-                                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTextureBasedOnMask", layer, overlayLayer: Dungeonshop.UI.BrushSelectorManager.Instance.texture, maskLayer: maskLayer);
+                                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTextureBasedOnMask", layer, overlayColor: Dungeonshop.UI.BrushSelectorManager.Instance.color, maskLayer: maskLayer);
                                 break;
                             }
                         case DrawingMode.Eraser:
