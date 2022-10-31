@@ -28,6 +28,7 @@ namespace Dungeonshop.UI
         Dictionary<DrawingMode, GameObject> panelDictionary = new Dictionary<DrawingMode, GameObject>();
 
         [HideInInspector] public Color color;
+        [HideInInspector] public Color textureColor;
         [HideInInspector] public Texture2D texture;
 
         private void Awake()
@@ -47,6 +48,7 @@ namespace Dungeonshop.UI
             drawingMode = DrawingMode.Color;
             texture = defaultTexture;
             color = defaultColor;
+            textureColor = defaultColor;
             DrawingMode[] drawingModes = (DrawingMode[]) Enum.GetValues(typeof(DrawingMode));
             Transform[] children = transform.Cast<Transform>().ToArray();
             for(int i=0; i < drawingModes.Length; i++)
@@ -86,7 +88,14 @@ namespace Dungeonshop.UI
 
         public void updateColor(Color newColor)
         {
-            color = newColor;
+            if(drawingMode == DrawingMode.Color)
+            {
+                color = newColor;
+            }
+            else if(drawingMode == DrawingMode.Texture)
+            {
+                textureColor = newColor;
+            }
         }
 
         public void updateTexture(Texture2D newTexture)
