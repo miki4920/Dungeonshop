@@ -9,6 +9,7 @@ namespace Dungeonshop.UI
     public class TextureView : MonoBehaviour, IPointerClickHandler
     {
         Texture2D texture;
+        public string textureName;
         void Start()
         {
             texture = (Texture2D) gameObject.GetComponent<RawImage>().texture;
