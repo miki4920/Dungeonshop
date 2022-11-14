@@ -1,0 +1,95 @@
+#pragma kernel ApplyTexture
+#pragma kernel ApplyTextureWithoutLerp
+#pragma kernel ApplyWhiteTexture
+#pragma kernel ApplyTextureBasedOnMask
+#pragma kernel ApplyColorBasedOnMask
+#pragma kernel ApplyEraserBasedOnMask
+#pragma kernel UpdateMask
+
+RWTexture2D<float4> canvas;
+RWTexture2D<float4> mask;
+Texture2D<float4> overlayTexture;
+float4 overlayColor;
+float4 previousMousePosition;
+float4 mousePosition;
+float size;
+float opacity;
+
+float4 blendColor(float4 background, float4 foreground, float opacity)
+{
+    float4 color;
+    color.a = 1 - (1 - opacity) * (1 - background.a);
+    if (color.a < 10e-6)
+    {
+        return color;
+    }
+    color.r = foreground.r * opacity / color.a + background.r * background.a * (1 - opacity) / color.a;
+    color.g = foreground.g * opacity / color.a + background.g * background.a * (1 - opacity) / color.a;
+    color.b = foreground.b * opacity / color.a + background.b * background.a * (1 - opacity) / color.a;
+    return color;
+}
+
+float4 BrushMask(float2 pixelPos, float4 currentColor, float brushSize, float opacity, float2 previousMousePosition,
+                 float2 mousePosition)
+{
+	for (float i = 0; i < 1.0; i += 0.01)
+	{
+		const float2 mousePos = lerp(previousMousePosition, mousePosition, i);
+        if (length(pixelPos - mousePos) < size)
+		{
+            return float4(1, 1, 1, opacity);
+        }
+	}
+    return currentColor;
+}
+
+[numthreads(8, 8, 1)]
+void ApplyTexture(uint3 id : SV_DispatchThreadID)
+{
+    canvas[id.xy].rgba = blendColor(canvas[id.xy].rgba, overlayTexture[id.xy].rgba, overlayTexture[id.xy].a);
+}
+
+[numthreads(8, 8, 1)]
+void ApplyTextureWithoutLerp(uint3 id : SV_DispatchThreadID)
+{
+    canvas[id.xy].rgba = overlayTexture[id.xy].rgba;
+}
+
+[numthreads(8, 8, 1)]
+void ApplyWhiteTexture(uint3 id : SV_DispatchThreadID)
+{
+	canvas[id.xy].rgba = float4(1, 1, 1, opacity);
+}
+
+[numthreads(8, 8, 1)]
+void ApplyTextureBasedOnMask(uint3 id : SV_DispatchThreadID)
+{
+    if (mask[id.xy].a > 0)
+    {
+        canvas[id.xy].rgba = blendColor(canvas[id.xy].rgba, overlayTexture[id.xy].rgba, mask[id.xy].a);
+    }
+}
+
+[numthreads(8, 8, 1)]
+void ApplyColorBasedOnMask(uint3 id : SV_DispatchThreadID)
+{
+    if (mask[id.xy].a > 0)
+    {
+        canvas[id.xy].rgba = blendColor(canvas[id.xy].rgba, overlayColor.rgba, mask[id.xy].a);
+    }
+}
+
+[numthreads(8, 8, 1)]
+void ApplyEraserBasedOnMask(uint3 id : SV_DispatchThreadID)
+{
+    if (mask[id.xy].a > 0)
+    {
+        canvas[id.xy].rgba = float4(canvas[id.xy].rgb, canvas[id.xy].a * (1 - mask[id.xy].a));
+    }
+}
+
+[numthreads(8, 8, 1)]
+void UpdateMask(uint3 id : SV_DispatchThreadID)
+{
+    canvas[id.xy] = BrushMask(id.xy, canvas[id.xy], size, opacity, previousMousePosition, mousePosition);
+}
