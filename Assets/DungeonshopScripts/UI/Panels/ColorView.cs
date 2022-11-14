@@ -70,8 +70,6 @@ namespace Dungeonshop.UI
             hueSlider.value = H * 360;
             saturationSlider.value = S * 100;
             lightnessSlider.value = V * 100;
-            
-            Debug.Log(BrushSelectorManager.Instance.color);
         }
     }
 
