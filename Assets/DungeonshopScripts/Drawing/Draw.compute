@@ -91,5 +91,5 @@ void ApplyEraserBasedOnMask(uint3 id : SV_DispatchThreadID)
 [numthreads(8, 8, 1)]
 void UpdateMask(uint3 id : SV_DispatchThreadID)
 {
-    canvas[id.xy] = BrushMask(id.xy, canvas[id.xy], size, opacity, previousMousePosition, mousePosition);
+    canvas[id.xy] = BrushMask(id.xy, canvas[id.xy], size, opacity, previousMousePosition.xy, mousePosition.xy);
 }
