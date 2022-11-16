@@ -13,6 +13,7 @@ namespace Dungeonshop.UI
         void Start()
         {
             texture = (Texture2D) gameObject.GetComponent<RawImage>().texture;
+            Dungeonshop.UI.BrushSelectorManager.Instance.updateTexture(texture);
         }
         public void OnPointerClick(PointerEventData eventData)
         {
