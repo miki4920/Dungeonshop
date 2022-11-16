@@ -3,22 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 namespace Dungeonshop.UI
 {
     public class ColorView : MonoBehaviour, IPointerClickHandler
     {
         [SerializeField] RawImage colorImage;
+        [SerializeField] RawImage currentColor;
         [SerializeField] Slider hueSlider;
         [SerializeField] Slider saturationSlider;
         [SerializeField] Slider lightnessSlider;
-        float hue;
-        float saturation;
-        float lightness;
-        Vector3 mousePosition;
         int width = 300;
         int height = 300;
-        Color color;
 
         void updateRawImage()
         {
@@ -28,7 +25,7 @@ namespace Dungeonshop.UI
             {
                 for (int y = 0; y < height; y++)
                 {
-                    colors[y * width + x] = Color.HSVToRGB(hue, ((float)x) / width, ((float)y) / height);
+                    colors[y * width + x] = Color.HSVToRGB(hueSlider.value / 360, ((float)x) / width, ((float)y) / height);
                 }
             }
             texture.filterMode = FilterMode.Point;
@@ -43,33 +40,41 @@ namespace Dungeonshop.UI
             updateRawImage();
             hueSlider.onValueChanged.AddListener(delegate
             {
-                hue = hueSlider.value / 360;
                 updateRawImage();
+                updateColor();
             });
 
             saturationSlider.onValueChanged.AddListener(delegate
             {
-                saturation = saturationSlider.value / 100;
+                updateColor();
             });
 
             lightnessSlider.onValueChanged.AddListener(delegate
             {
-                lightness = lightnessSlider.value / 100;
+                updateColor();
             });
+        }
+
+        public void updateColor()
+        {
+            Color color = Color.HSVToRGB(hueSlider.value / 360, saturationSlider.value / 100, lightnessSlider.value / 100);
+            BrushSelectorManager.Instance.updateColor(color);
+            currentColor.color = color;
+        }
+
+        public void updateColorOnClick()
+        {
+            Vector3 drawingAreaPosition = colorImage.transform.position;
+            float globalPositionX = (Mathf.Clamp(Input.mousePosition.x - drawingAreaPosition.x, 0, width) / width);
+            float globalPositionY = (1 - (Mathf.Clamp(drawingAreaPosition.y - Input.mousePosition.y, 0, height) / height));
+            saturationSlider.SetValueWithoutNotify((int)(globalPositionX * 100));
+            lightnessSlider.SetValueWithoutNotify((int)(globalPositionY * 100));
+            updateColor();
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            Vector3 drawingAreaPosition = colorImage.transform.position;
-            int globalPositionX = (int)(Input.mousePosition.x - drawingAreaPosition.x);
-            int globalPositionY = (int)(Input.mousePosition.y - drawingAreaPosition.y);
-            Color tempColor = (colorImage.texture as Texture2D).GetPixel(globalPositionX, globalPositionY);
-            BrushSelectorManager.Instance.updateColor(tempColor);
-            float H, S, V;
-            Color.RGBToHSV(tempColor, out H, out S, out V);
-            hueSlider.value = H * 360;
-            saturationSlider.value = S * 100;
-            lightnessSlider.value = V * 100;
+            updateColorOnClick();
         }
     }
 
