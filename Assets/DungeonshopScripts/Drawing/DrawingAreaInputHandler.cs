@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Dungeonshop
 {
@@ -29,18 +30,20 @@ namespace Dungeonshop
         public bool isInsideDrawingArea()
         {
             Vector3 drawingAreaPosition = drawingAreaTransform.position;
-            bool insideArea = Input.mousePosition.x <= Screen.width - drawingAreaPosition.x && Input.mousePosition.x >= drawingAreaPosition.x;
-            if (Input.GetMouseButton(0) && !insideArea)
+            
+            bool insideAreaX = Input.mousePosition.x <= drawingAreaPosition.x + (drawingAreaTransform.rect.width / 2) && Input.mousePosition.x >= drawingAreaPosition.x - (drawingAreaTransform.rect.width / 2);
+            bool insideAreaY = Input.mousePosition.y <= drawingAreaPosition.y + (drawingAreaTransform.rect.height / 2) && Input.mousePosition.y >= drawingAreaPosition.y - (drawingAreaTransform.rect.height / 2);
+            if (Input.GetMouseButton(0) && !insideAreaX && !insideAreaY)
             {
                 holdingOutsideDrawingArea = true;
                 return false;
             }
-            else if(holdingOutsideDrawingArea && insideArea && !Input.GetMouseButton(0))
+            else if(holdingOutsideDrawingArea && insideAreaX && insideAreaY && !Input.GetMouseButton(0))
             {
                 holdingOutsideDrawingArea = false;
                 return false;
             }
-            else if(Input.GetMouseButton(0) && insideArea && !holdingOutsideDrawingArea)
+            else if(Input.GetMouseButton(0) && insideAreaX && insideAreaY && !holdingOutsideDrawingArea)
             {
                 return true;
             }
@@ -50,8 +53,21 @@ namespace Dungeonshop
         public Vector3 mousePosition()
         {
             Vector3 drawingAreaPosition = drawingAreaTransform.position;
-            float globalPositionX = Input.mousePosition.x - drawingAreaPosition.x;
-            return new Vector3(globalPositionX, Input.mousePosition.y, 0);
+            float drawingAreaX = drawingAreaPosition.x - (drawingAreaTransform.rect.width / 2);
+            float drawingAreaY = drawingAreaPosition.y - (drawingAreaTransform.rect.height / 2);
+            float globalPositionX = Input.mousePosition.x;
+            float globalPositionY = Input.mousePosition.y;
+            globalPositionX = (BackgroundManager.Instance.width) / (drawingAreaTransform.rect.width) * (globalPositionX - drawingAreaX);
+            globalPositionY = (BackgroundManager.Instance.height) / (drawingAreaTransform.rect.height) * (globalPositionY - drawingAreaY);
+            return new Vector3(globalPositionX, globalPositionY, 0);
+        }
+
+        public void changeSize()
+        {
+            float mouseDelta = Input.mouseScrollDelta.y;
+            mouseDelta = mouseDelta >= 0 ? 1.1f : 0.9f;
+            
+            gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(drawingAreaTransform.rect.width * mouseDelta, drawingAreaTransform.rect.height * mouseDelta);
         }
     }
 }
