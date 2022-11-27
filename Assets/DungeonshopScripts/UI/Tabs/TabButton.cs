@@ -10,7 +10,7 @@ namespace Dungeonshop.UI
     public class TabButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
         public TabGroup tabGroup;
-
+        public string tabName;
         public Image background;
 
         public void OnPointerClick(PointerEventData eventData)
