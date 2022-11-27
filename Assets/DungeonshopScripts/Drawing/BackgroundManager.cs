@@ -11,6 +11,9 @@ namespace Dungeonshop
     public class BackgroundManager : MonoBehaviour
     {
         public static BackgroundManager Instance;
+        public RawImage canvas;
+        public int width;
+        public int height;
         Vector3 previousMousePosition;
         RenderTexture canvasLayer;
         RenderTexture displayLayer;
@@ -30,7 +33,7 @@ namespace Dungeonshop
 
         public RenderTexture createBlankRenderTexture()
         {
-            RenderTexture blankLayer = new RenderTexture(1152, Screen.height, 24, RenderTextureFormat.ARGB32);
+            RenderTexture blankLayer = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
             blankLayer.filterMode = FilterMode.Point;
             blankLayer.enableRandomWrite = true;
             blankLayer.Create();
@@ -42,7 +45,7 @@ namespace Dungeonshop
             canvasLayer = createBlankRenderTexture();
             displayLayer = createBlankRenderTexture();
             maskLayer = createBlankRenderTexture();
-            gameObject.GetComponent<RawImage>().texture = canvasLayer;
+            canvas.texture = canvasLayer;
             previousMousePosition = Input.mousePosition;
         }
 
