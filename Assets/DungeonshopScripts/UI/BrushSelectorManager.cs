@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace Dungeonshop.UI
 {
@@ -22,10 +23,11 @@ namespace Dungeonshop.UI
         [SerializeField] Color defaultColor;
         [SerializeField] Slider sizeSlider;
         [SerializeField] Slider opacitySlider;
+        [SerializeField] TMP_Text sizeText;
+        [SerializeField] TMP_Text opacityText;
         [HideInInspector] public DrawingMode drawingMode;
         Dictionary<DrawingMode, float> sizeDictionary = new Dictionary<DrawingMode, float>();
         Dictionary<DrawingMode, float> opacityDictionary = new Dictionary<DrawingMode, float>();
-        Dictionary<DrawingMode, GameObject> panelDictionary = new Dictionary<DrawingMode, GameObject>();
 
         [HideInInspector] public Color color;
         [HideInInspector] public Color textureColor;
@@ -45,30 +47,29 @@ namespace Dungeonshop.UI
 
         void Start()
         {
+            sizeText.text = defaultSize.ToString();
+            opacityText.text = (defaultOpacity * 100).ToString();
             drawingMode = DrawingMode.Color;
             texture = defaultTexture;
             color = defaultColor;
             textureColor = defaultColor;
             DrawingMode[] drawingModes = (DrawingMode[]) Enum.GetValues(typeof(DrawingMode));
-            Transform[] children = transform.Cast<Transform>().ToArray();
-            for(int i=0; i < drawingModes.Length; i++)
+            for (int i = 0; i < drawingModes.Length; i++)
             {
                 sizeDictionary[drawingModes[i]] = defaultSize;
                 opacityDictionary[drawingModes[i]] = defaultOpacity;
-                // Add 1 to i to offset parent object transform being contained in the list
-                panelDictionary[drawingModes[i]] = children[i+1].gameObject;
-                panelDictionary[drawingModes[i]].gameObject.SetActive(false);
             }
-            panelDictionary[drawingMode].SetActive(true);
             setSliders();
             sizeSlider.onValueChanged.AddListener(delegate
             {
                 sizeDictionary[drawingMode] = sizeSlider.value;
+                sizeText.text = sizeSlider.value.ToString();
             });
 
             opacitySlider.onValueChanged.AddListener(delegate
             {
                 opacityDictionary[drawingMode] = opacitySlider.value/100;
+                opacityText.text = opacitySlider.value.ToString();
             });
         }
 
@@ -80,9 +81,7 @@ namespace Dungeonshop.UI
 
         public void changeDrawingMode(DrawingMode newDrawingMode)
         {
-            panelDictionary[drawingMode].SetActive(false);
             drawingMode = newDrawingMode;
-            panelDictionary[drawingMode].SetActive(true);
             setSliders();
         }
 
