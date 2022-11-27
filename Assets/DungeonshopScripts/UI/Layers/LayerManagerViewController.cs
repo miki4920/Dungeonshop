@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Dungeonshop;
+using TMPro;
 
 namespace Dungeonshop.UI
 {
@@ -11,14 +12,23 @@ namespace Dungeonshop.UI
         [SerializeField] Transform layersContainer;
         [SerializeField] GameObject layerContainerPrefab;
         List<GameObject> layerContainers = new List<GameObject>();
-        
+        int layerCount;
+
+        public void Start()
+        {
+            layerCount = 1;
+        }
+
         public void addLayer()
         {
             Layer blankLayer = Dungeonshop.LayerManager.Instance.createNewLayer();
             GameObject layerContainer = Instantiate(this.layerContainerPrefab, this.layersContainer);
             layerContainer.GetComponent<LayerView>().layer = blankLayer;
             layerContainer.GetComponent<LayerView>().viewController = this;
+            
             layerContainer.transform.GetChild(1).GetComponent<RawImage>().texture = blankLayer.background;
+            layerContainer.transform.GetChild(2).GetComponent<TMP_Text>().text = "Layer " + layerCount.ToString();
+            layerCount += 1;
             this.layerContainers.Insert(Dungeonshop.LayerManager.Instance.layer, layerContainer);
         }
 
