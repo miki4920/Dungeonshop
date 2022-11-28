@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Dungeonshop.UI;
 using TMPro;
 
-namespace Dungeonshop.Files
+namespace Dungeonshop.UI
 {
     public class LoadTextures : MonoBehaviour
     {
@@ -18,10 +18,12 @@ namespace Dungeonshop.Files
             foreach (Object texture in loadedTextures)
             {
                 GameObject temporaryTile = Instantiate(textureTilePrefab, gameObject.transform);
-                temporaryTile.GetComponent<RawImage>().texture = (Texture2D)texture;
-                temporaryTile.GetComponent<TextureView>().textureName = texture.name;
+                temporaryTile.transform.GetChild(0).GetComponent<RawImage>().texture = (Texture2D)texture;
+                temporaryTile.GetComponent<TabButton>().tabName = texture.name;
+                temporaryTile.GetComponent<TabButton>().tabGroup = gameObject.GetComponent<TabGroup>();
                 textures.Add(temporaryTile);
             }
+            BrushSelectorManager.Instance.updateTexture((Texture2D) textures[0].transform.GetChild(0).GetComponent<RawImage>().texture);
         }
 
         public void updateTextureList(GameObject textureSearchBar)
@@ -29,7 +31,7 @@ namespace Dungeonshop.Files
             string searchText = textureSearchBar.GetComponent<TMP_InputField>().text;
             foreach (GameObject textureObject in textures)
             {
-                if(textureObject.GetComponent<TextureView>().textureName.Contains(searchText))
+                if(textureObject.GetComponent<TabButton>().tabName.Contains(searchText))
                 {
                     textureObject.SetActive(true);
                 }
