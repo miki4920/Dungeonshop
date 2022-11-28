@@ -19,7 +19,6 @@ namespace Dungeonshop.UI
         public static BrushSelectorManager Instance;
         [SerializeField] float defaultSize = 20f;
         [SerializeField] float defaultOpacity = 1;
-        [SerializeField] Texture2D defaultTexture;
         [SerializeField] Color defaultColor;
         [SerializeField] Slider sizeSlider;
         [SerializeField] Slider opacitySlider;
@@ -49,8 +48,7 @@ namespace Dungeonshop.UI
         {
             sizeText.text = defaultSize.ToString();
             opacityText.text = (defaultOpacity * 100).ToString();
-            drawingMode = DrawingMode.Color;
-            texture = defaultTexture;
+            drawingMode = DrawingMode.Texture;
             color = defaultColor;
             textureColor = defaultColor;
             DrawingMode[] drawingModes = (DrawingMode[]) Enum.GetValues(typeof(DrawingMode));
@@ -76,12 +74,20 @@ namespace Dungeonshop.UI
         public void setSliders()
         {
             sizeSlider.SetValueWithoutNotify(sizeDictionary[drawingMode]);
+            sizeText.text = sizeSlider.value.ToString();
             opacitySlider.SetValueWithoutNotify(opacityDictionary[drawingMode]*100);
+            opacityText.text = opacitySlider.value.ToString();
         }
 
         public void changeDrawingMode(DrawingMode newDrawingMode)
         {
             drawingMode = newDrawingMode;
+            setSliders();
+        }
+
+        public void changeDrawingModeInt(int newDrawingMode)
+        {
+            drawingMode = (DrawingMode) newDrawingMode;
             setSliders();
         }
 
