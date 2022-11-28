@@ -8,12 +8,10 @@ namespace Dungeonshop.UI
 {
     public class TextureView : MonoBehaviour, IPointerClickHandler
     {
-        Texture2D texture;
-        public string textureName;
+        public Texture2D texture;
         void Start()
         {
-            texture = (Texture2D) gameObject.GetComponent<RawImage>().texture;
-            Dungeonshop.UI.BrushSelectorManager.Instance.updateTexture(texture);
+            texture = (Texture2D) gameObject.transform.GetChild(0).GetComponent<RawImage>().texture;
         }
         public void OnPointerClick(PointerEventData eventData)
         {
