@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,7 @@ namespace Dungeonshop
         public static DrawingAreaInputHandler Instance;
         public bool holdingOutsideDrawingArea;
         [SerializeField] RectTransform drawingAreaTransform;
+        [SerializeField] RectTransform viewingPortTransform;
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -30,9 +32,12 @@ namespace Dungeonshop
         public bool isInsideDrawingArea()
         {
             Vector3 drawingAreaPosition = drawingAreaTransform.position;
-            
-            bool insideAreaX = Input.mousePosition.x <= drawingAreaPosition.x + (drawingAreaTransform.rect.width / 2) && Input.mousePosition.x >= drawingAreaPosition.x - (drawingAreaTransform.rect.width / 2);
-            bool insideAreaY = Input.mousePosition.y <= drawingAreaPosition.y + (drawingAreaTransform.rect.height / 2) && Input.mousePosition.y >= drawingAreaPosition.y - (drawingAreaTransform.rect.height / 2);
+            float minX = Math.Max(drawingAreaPosition.x - (drawingAreaTransform.rect.width / 2), viewingPortTransform.position.x - viewingPortTransform.rect.width / 2);
+            float maxX = Math.Min(drawingAreaPosition.x + (drawingAreaTransform.rect.width / 2), viewingPortTransform.position.x + viewingPortTransform.rect.width / 2);
+            float minY = Math.Max(drawingAreaPosition.y - (drawingAreaTransform.rect.height / 2), viewingPortTransform.position.y - viewingPortTransform.rect.height / 2);
+            float maxY = Math.Min(drawingAreaPosition.y + (drawingAreaTransform.rect.height / 2), viewingPortTransform.position.y + viewingPortTransform.rect.height / 2);
+            bool insideAreaX = Input.mousePosition.x <= maxX && Input.mousePosition.x >= minX;
+            bool insideAreaY = Input.mousePosition.y <= maxY && Input.mousePosition.y >= minY;
             if (Input.GetMouseButton(0) && !insideAreaX && !insideAreaY)
             {
                 holdingOutsideDrawingArea = true;
