@@ -22,7 +22,8 @@ namespace Dungeonshop.UI
         public void addLayer()
         {
             Layer blankLayer = Dungeonshop.LayerManager.Instance.createNewLayer();
-            GameObject layerContainer = Instantiate(this.layerContainerPrefab, this.layersContainer);
+            GameObject layerContainerParent = Instantiate(this.layerContainerPrefab, this.layersContainer);
+            GameObject layerContainer = layerContainerParent.transform.GetChild(0).gameObject;
             layerContainer.GetComponent<LayerView>().layer = blankLayer;
             layerContainer.GetComponent<LayerView>().viewController = this;
             
