@@ -11,7 +11,6 @@ namespace Dungeonshop.UI
     {
         [SerializeField] Transform layersContainer;
         [SerializeField] GameObject layerContainerPrefab;
-        List<GameObject> layerContainers = new List<GameObject>();
         int layerCount;
 
         public void Start()
@@ -23,37 +22,50 @@ namespace Dungeonshop.UI
         {
             Layer blankLayer = Dungeonshop.LayerManager.Instance.createNewLayer();
             GameObject layerContainerParent = Instantiate(this.layerContainerPrefab, this.layersContainer);
+            layerContainerParent.GetComponent<LayerDragAndDrop>().viewController = this;
             GameObject layerContainer = layerContainerParent.transform.GetChild(0).gameObject;
             layerContainer.GetComponent<LayerView>().layer = blankLayer;
             layerContainer.GetComponent<LayerView>().viewController = this;
-            
+
             layerContainer.transform.GetChild(1).GetComponent<RawImage>().texture = blankLayer.background;
             layerContainer.transform.GetChild(2).GetComponent<TMP_Text>().text = "Layer " + layerCount.ToString();
             layerCount += 1;
-            this.layerContainers.Insert(Dungeonshop.LayerManager.Instance.layer, layerContainer);
         }
 
-        public void changeLayer(Layer layer)
+        public void changeLayer(GameObject layerObject)
         {
+            Layer layer = layerObject.GetComponent<LayerView>().layer;
             for (int i = 0; i < Dungeonshop.LayerManager.Instance.layers.Count; i++)
             {
-                if (layer == Dungeonshop.LayerManager.Instance.layers[i]) {
+                if (layer == Dungeonshop.LayerManager.Instance.layers[i])
+                {
                     Dungeonshop.LayerManager.Instance.layer = i;
                 }
             }
         }
 
-        public void deleteLayer(Layer layer)
+        public void deleteLayer(GameObject layerObject)
         {
+            Layer layer = layerObject.GetComponent<LayerView>().layer;
             for (int i = 0; i < Dungeonshop.LayerManager.Instance.layers.Count; i++)
             {
                 if (layer == Dungeonshop.LayerManager.Instance.layers[i])
                 {
                     Dungeonshop.LayerManager.Instance.deleteLayer(i);
-                    Destroy(layerContainers[i]);
-                    layerContainers.RemoveAt(i);
+                    Destroy(layerObject);
                 }
             }
+        }
+
+        public void changeLayerPosition(int currentIndex, int newIndex)
+        {
+            Layer layer = Dungeonshop.LayerManager.Instance.layers[currentIndex];
+            Dungeonshop.LayerManager.Instance.layers.RemoveAt(currentIndex);
+            if (newIndex > currentIndex)
+            {
+                newIndex -= 1;
+            }
+            Dungeonshop.LayerManager.Instance.layers.Insert(newIndex, layer);
         }
     }
 }

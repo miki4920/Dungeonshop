@@ -18,12 +18,12 @@ namespace Dungeonshop.UI
 
         public void delete()
         {
-            viewController.deleteLayer(layer);
+            viewController.deleteLayer(gameObject);
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-           viewController.changeLayer(layer);
+           viewController.changeLayer(gameObject);
         }
     }
 }

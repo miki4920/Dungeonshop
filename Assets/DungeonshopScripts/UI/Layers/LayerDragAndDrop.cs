@@ -3,50 +3,54 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-
-public class LayerDragAndDrop : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
+namespace Dungeonshop.UI
 {
-    public RectTransform currentTransform;
-    private GameObject mainContent;
-    private Vector3 currentPossition;
-
-    private int totalChild;
-
-    public void OnPointerDown(PointerEventData eventData)
+    public class LayerDragAndDrop : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
-        currentPossition = currentTransform.position;
-        mainContent = currentTransform.parent.gameObject;
-        totalChild = mainContent.transform.childCount;
-    }
+        public RectTransform currentTransform;
+        public LayerManagerViewController viewController;
+        private GameObject mainContent;
+        private Vector3 currentPossition;
 
-    public void OnDrag(PointerEventData eventData)
-    {
-        currentTransform.position =
-            new Vector3(currentTransform.position.x, eventData.position.y, currentTransform.position.z);
+        private int totalChild;
 
-        for (int i = 0; i < totalChild; i++)
+        public void OnPointerDown(PointerEventData eventData)
         {
-            if (i != currentTransform.GetSiblingIndex())
+            currentPossition = currentTransform.position;
+            mainContent = currentTransform.parent.gameObject;
+            totalChild = mainContent.transform.childCount;
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            currentTransform.position =
+                new Vector3(currentTransform.position.x, eventData.position.y, currentTransform.position.z);
+
+            for (int i = 0; i < totalChild; i++)
             {
-                Transform otherTransform = mainContent.transform.GetChild(i);
-                int distance = (int)Vector3.Distance(currentTransform.position,
-                    otherTransform.position);
-                if (distance <= 10)
+                if (i != currentTransform.GetSiblingIndex())
                 {
-                    Vector3 otherTransformOldPosition = otherTransform.position;
-                    otherTransform.position = new Vector3(otherTransform.position.x, currentPossition.y,
-                        otherTransform.position.z);
-                    currentTransform.position = new Vector3(currentTransform.position.x, otherTransformOldPosition.y,
-                        currentTransform.position.z);
-                    currentTransform.SetSiblingIndex(otherTransform.GetSiblingIndex());
-                    currentPossition = currentTransform.position;
+                    Transform otherTransform = mainContent.transform.GetChild(i);
+                    int distance = (int)Vector3.Distance(currentTransform.position,
+                        otherTransform.position);
+                    if (distance <= 10)
+                    {
+                        Vector3 otherTransformOldPosition = otherTransform.position;
+                        otherTransform.position = new Vector3(otherTransform.position.x, currentPossition.y,
+                            otherTransform.position.z);
+                        currentTransform.position = new Vector3(currentTransform.position.x, otherTransformOldPosition.y,
+                            currentTransform.position.z);
+                        viewController.changeLayerPosition(currentTransform.GetSiblingIndex(), otherTransform.GetSiblingIndex());
+                        currentTransform.SetSiblingIndex(otherTransform.GetSiblingIndex());
+                        currentPossition = currentTransform.position;
+                    }
                 }
             }
         }
-    }
 
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        currentTransform.position = currentPossition;
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            currentTransform.position = currentPossition;
+        }
     }
 }
