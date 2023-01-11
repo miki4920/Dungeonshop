@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,13 +8,13 @@ namespace Dungeonshop.UI
         public RectTransform currentTransform;
         public LayerManagerViewController viewController;
         private GameObject mainContent;
-        private Vector3 currentPossition;
+        private Vector3 currentPosition;
 
         private int totalChild;
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            currentPossition = currentTransform.position;
+            currentPosition = currentTransform.position;
             mainContent = currentTransform.parent.gameObject;
             totalChild = mainContent.transform.childCount;
         }
@@ -31,26 +29,35 @@ namespace Dungeonshop.UI
                 if (i != currentTransform.GetSiblingIndex())
                 {
                     Transform otherTransform = mainContent.transform.GetChild(i);
-                    int distance = (int)Vector3.Distance(currentTransform.position,
-                        otherTransform.position);
-                    if (distance <= 10)
+                    int distance = (int) (otherTransform.position.y - currentTransform.position.y);
+                    if (-5 <= distance && distance <= 5 && distance != 0)
                     {
                         Vector3 otherTransformOldPosition = otherTransform.position;
-                        otherTransform.position = new Vector3(otherTransform.position.x, currentPossition.y,
+                        otherTransform.position = new Vector3(otherTransform.position.x, currentPosition.y,
                             otherTransform.position.z);
                         currentTransform.position = new Vector3(currentTransform.position.x, otherTransformOldPosition.y,
                             currentTransform.position.z);
-                        viewController.changeLayerPosition(currentTransform.GetSiblingIndex(), otherTransform.GetSiblingIndex());
+                        if (0 < distance && distance <= 5)
+                        {
+                            viewController.changeLayerPosition(otherTransform.GetSiblingIndex(), currentTransform.GetSiblingIndex());
+
+                        }
+                        else if (-5 <= distance && distance < 0)
+                        {
+                            viewController.changeLayerPosition(currentTransform.GetSiblingIndex(), otherTransform.GetSiblingIndex());
+                        }
                         currentTransform.SetSiblingIndex(otherTransform.GetSiblingIndex());
-                        currentPossition = currentTransform.position;
+                        currentPosition = currentTransform.position;
                     }
+                   
+                    
                 }
             }
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            currentTransform.position = currentPossition;
+            currentTransform.position = currentPosition;
         }
     }
 }
