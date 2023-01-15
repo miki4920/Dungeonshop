@@ -24,11 +24,10 @@ namespace Dungeonshop.UI
                 tabButtons = new List<TabButton>();
                 
             }
-            if( tabButtons.Count == 0)
+            if (button == selectedTab)
             {
                 OnTabSelected(button);
             }
-
             tabButtons.Add(button);
         }
 
