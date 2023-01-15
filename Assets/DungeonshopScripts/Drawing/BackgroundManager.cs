@@ -46,7 +46,6 @@ namespace Dungeonshop
             displayLayer = createBlankRenderTexture();
             maskLayer = createBlankRenderTexture();
             canvas.texture = canvasLayer;
-            previousMousePosition = Input.mousePosition;
         }
 
 
