@@ -38,7 +38,7 @@ namespace Dungeonshop
             float maxY = Math.Min(drawingAreaPosition.y + (drawingAreaTransform.rect.height / 2), viewingPortTransform.position.y + viewingPortTransform.rect.height / 2);
             bool insideAreaX = Input.mousePosition.x <= maxX && Input.mousePosition.x >= minX;
             bool insideAreaY = Input.mousePosition.y <= maxY && Input.mousePosition.y >= minY;
-            if (Input.GetMouseButton(0) && !insideAreaX && !insideAreaY)
+            if (Input.GetMouseButton(0) && (!insideAreaX || !insideAreaY))
             {
                 holdingOutsideDrawingArea = true;
                 return false;
