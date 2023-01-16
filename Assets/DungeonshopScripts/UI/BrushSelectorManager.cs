@@ -14,9 +14,10 @@ namespace Dungeonshop.UI
         Texture,
         Eraser
     }
-    public class BrushSelectorManager : MonoBehaviour
+
+    public class BrushSelectorManager : ColorReceiver
     {
-        public static BrushSelectorManager Instance;
+        public static new BrushSelectorManager Instance;
         [SerializeField] float defaultSize = 20f;
         [SerializeField] float defaultOpacity = 1;
         [SerializeField] Color defaultColor;
@@ -91,7 +92,7 @@ namespace Dungeonshop.UI
             setSliders();
         }
 
-        public void updateColor(Color newColor)
+        public override void updateColor(Color newColor)
         {
             if(drawingMode == DrawingMode.Color)
             {
@@ -117,8 +118,6 @@ namespace Dungeonshop.UI
         {
             return sizeDictionary[drawingMode];
         }
-
-
     }
 }
 
