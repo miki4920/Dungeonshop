@@ -14,7 +14,6 @@ namespace Dungeonshop
         public RawImage canvas;
         public int width;
         public int height;
-        Vector3 previousMousePosition;
         RenderTexture canvasLayer;
         RenderTexture displayLayer;
         RenderTexture maskLayer;
@@ -88,18 +87,18 @@ namespace Dungeonshop
             }
         }
 
-        void Update()
+        public void UpdateBackground()
         {
+            DrawingAreaInputHandler inputBoard = DrawingAreaInputHandler.Instance;
             uniteLayers();
             if (Dungeonshop.LayerManager.Instance.getVisibleLayers().Count > 0)
             {
                 
-                if (Dungeonshop.DrawingAreaInputHandler.Instance.isInsideDrawingArea())
+                if (inputBoard.insideDrawingArea)
                 {
-                    Vector3 mousePosition = Dungeonshop.DrawingAreaInputHandler.Instance.mousePosition();
                     float size = Dungeonshop.UI.BrushSelectorManager.Instance.getSize();
                     float opacity = Dungeonshop.UI.BrushSelectorManager.Instance.getOpacity();
-                    Dungeonshop.ShaderManager.Instance.applyTexture("UpdateMask", maskLayer, size: size, opacity: opacity, previousMousePosition: previousMousePosition, mousePosition: mousePosition);
+                    Dungeonshop.ShaderManager.Instance.applyTexture("UpdateMask", maskLayer, size: size, opacity: opacity, previousMousePosition: inputBoard.previousMousePosition, mousePosition: inputBoard.mousePosition);
                 }
                 else if(!Input.GetMouseButton(0))
                 {
@@ -126,7 +125,6 @@ namespace Dungeonshop
                     }
                     Dungeonshop.ShaderManager.Instance.applyTexture("ApplyWhiteTexture", maskLayer, opacity: 0);
                 }
-                previousMousePosition = Dungeonshop.DrawingAreaInputHandler.Instance.mousePosition();
             }
 
         }
