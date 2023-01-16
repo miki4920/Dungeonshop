@@ -8,10 +8,18 @@ namespace Dungeonshop
 {
     public class DrawingAreaInputHandler : MonoBehaviour
     {
-        public static DrawingAreaInputHandler Instance;
-        public bool holdingOutsideDrawingArea;
+        [HideInInspector] public static DrawingAreaInputHandler Instance;
+
+        bool holdingOutsideDrawingArea;
+
+        [HideInInspector] public Vector3 mousePosition;
+        [HideInInspector] public bool insideDrawingArea;
+        [HideInInspector] public bool isPressed;
+        [HideInInspector] public Vector3 previousMousePosition;
+
         [SerializeField] RectTransform drawingAreaTransform;
         [SerializeField] RectTransform viewingPortTransform;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -27,6 +35,15 @@ namespace Dungeonshop
         private void Start()
         {
             holdingOutsideDrawingArea = false;
+        }
+
+        private void Update()
+        {
+            mousePosition = getMousePosition();
+            insideDrawingArea = isInsideDrawingArea();
+            isPressed = Input.GetMouseButton(0);
+            BackgroundManager.Instance.UpdateBackground();
+            previousMousePosition = mousePosition;
         }
 
         public bool isInsideDrawingArea()
@@ -55,7 +72,7 @@ namespace Dungeonshop
             return false;
         }
 
-        public Vector3 mousePosition()
+        public Vector3 getMousePosition()
         {
             Vector3 drawingAreaPosition = drawingAreaTransform.position;
             float drawingAreaX = drawingAreaPosition.x - (drawingAreaTransform.rect.width / 2);
@@ -72,7 +89,7 @@ namespace Dungeonshop
             float mouseDelta = Input.mouseScrollDelta.y;
             mouseDelta = mouseDelta >= 0 ? 1.1f : 0.9f;
             
-            gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(drawingAreaTransform.rect.width * mouseDelta, drawingAreaTransform.rect.height * mouseDelta);
+            drawingAreaTransform.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(drawingAreaTransform.rect.width * mouseDelta, drawingAreaTransform.rect.height * mouseDelta);
         }
     }
 }
