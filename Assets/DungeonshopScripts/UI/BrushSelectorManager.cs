@@ -49,7 +49,7 @@ namespace Dungeonshop.UI
         {
             sizeText.text = defaultSize.ToString();
             opacityText.text = (defaultOpacity * 100).ToString();
-            drawingMode = DrawingMode.Texture;
+            drawingMode = DrawingMode.Color;
             color = defaultColor;
             textureColor = defaultColor;
             DrawingMode[] drawingModes = (DrawingMode[]) Enum.GetValues(typeof(DrawingMode));
