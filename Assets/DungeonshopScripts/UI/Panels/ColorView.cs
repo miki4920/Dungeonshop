@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using System.Linq;
 using TMPro;
 
 namespace Dungeonshop.UI
@@ -18,6 +16,8 @@ namespace Dungeonshop.UI
         [SerializeField] TMP_Text hueText;
         [SerializeField] TMP_Text saturationText;
         [SerializeField] TMP_Text lightnessText;
+        [SerializeField] GameObject colorReceiverObject;
+        ColorReceiver colorReceiver;
 
         int width;
         int height;
@@ -82,7 +82,7 @@ namespace Dungeonshop.UI
         {
             width = (int) colorImage.GetComponent<RectTransform>().rect.width;
             height =(int) colorImage.GetComponent<RectTransform>().rect.height;
-
+            colorReceiver = colorReceiverObject.GetComponent<ColorReceiver>();
             updateRawImage();
             updateSaturation();
             updateLightness();
@@ -111,7 +111,7 @@ namespace Dungeonshop.UI
             hueText.text = hueSlider.value.ToString();
             saturationText.text = saturationSlider.value.ToString();
             lightnessText.text = lightnessSlider.value.ToString();
-            BrushSelectorManager.Instance.updateColor(color);
+            colorReceiver.updateColor(color);
             currentColor.color = color;
         }
 
