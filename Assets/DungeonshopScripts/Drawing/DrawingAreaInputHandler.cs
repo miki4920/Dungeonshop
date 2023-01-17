@@ -11,12 +11,15 @@ namespace Dungeonshop
         [HideInInspector] public static DrawingAreaInputHandler Instance;
 
         bool holdingOutsideDrawingArea;
+        bool shifting;
 
         [HideInInspector] public Vector3 mousePosition;
+        [HideInInspector] public Vector3 mousePositionRelative;
         [HideInInspector] public bool insideDrawingArea;
-        [HideInInspector] public bool isPressed;
+        [HideInInspector] public bool isLeftClickPressed;
+        [HideInInspector] public bool isMiddleClickPressed;
         [HideInInspector] public Vector3 previousMousePosition;
-
+        [HideInInspector] public Vector3 previousMousePositionRelative;
         [SerializeField] RectTransform drawingAreaTransform;
         [SerializeField] RectTransform viewingPortTransform;
 
@@ -39,11 +42,15 @@ namespace Dungeonshop
 
         private void Update()
         {
-            mousePosition = getMousePosition();
+            mousePosition = Input.mousePosition;
+            mousePositionRelative = getMousePosition();
             insideDrawingArea = isInsideDrawingArea();
-            isPressed = Input.GetMouseButton(0);
+            isLeftClickPressed = Input.GetMouseButton(0);
+            isMiddleClickPressed = Input.GetMouseButton(2);
             BackgroundManager.Instance.UpdateBackground();
+            shiftScreen();
             previousMousePosition = mousePosition;
+            previousMousePositionRelative = mousePositionRelative;
         }
 
         public bool isInsideDrawingArea()
@@ -55,17 +62,17 @@ namespace Dungeonshop
             float maxY = Math.Min(drawingAreaPosition.y + (drawingAreaTransform.rect.height / 2), viewingPortTransform.position.y + viewingPortTransform.rect.height / 2);
             bool insideAreaX = Input.mousePosition.x <= maxX && Input.mousePosition.x >= minX;
             bool insideAreaY = Input.mousePosition.y <= maxY && Input.mousePosition.y >= minY;
-            if (Input.GetMouseButton(0) && (!insideAreaX || !insideAreaY))
+            if (isLeftClickPressed && (!insideAreaX || !insideAreaY))
             {
                 holdingOutsideDrawingArea = true;
                 return false;
             }
-            else if(holdingOutsideDrawingArea && insideAreaX && insideAreaY && !Input.GetMouseButton(0))
+            else if(holdingOutsideDrawingArea && insideAreaX && insideAreaY && !isLeftClickPressed)
             {
                 holdingOutsideDrawingArea = false;
                 return false;
             }
-            else if(Input.GetMouseButton(0) && insideAreaX && insideAreaY && !holdingOutsideDrawingArea)
+            else if(isLeftClickPressed && insideAreaX && insideAreaY && !holdingOutsideDrawingArea)
             {
                 return true;
             }
@@ -82,6 +89,22 @@ namespace Dungeonshop
             globalPositionX = (BackgroundManager.Instance.width) / (drawingAreaTransform.rect.width) * (globalPositionX - drawingAreaX);
             globalPositionY = (BackgroundManager.Instance.height) / (drawingAreaTransform.rect.height) * (globalPositionY - drawingAreaY);
             return new Vector3(globalPositionX, globalPositionY, 0);
+        }
+
+        public void shiftScreen()
+        {
+            if(isMiddleClickPressed && !shifting)
+            {
+                shifting = true;
+            }
+            else if(isMiddleClickPressed && shifting)
+            {
+                drawingAreaTransform.SetPositionAndRotation(drawingAreaTransform.position + (mousePosition - previousMousePosition), drawingAreaTransform.rotation);
+            }
+            else if(!isMiddleClickPressed && shifting)
+            {
+                shifting = false;
+            }
         }
 
         public void changeSize()
