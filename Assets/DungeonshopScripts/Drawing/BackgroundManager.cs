@@ -98,7 +98,7 @@ namespace Dungeonshop
                 {
                     float size = Dungeonshop.UI.BrushSelectorManager.Instance.getSize();
                     float opacity = Dungeonshop.UI.BrushSelectorManager.Instance.getOpacity();
-                    Dungeonshop.ShaderManager.Instance.applyTexture("UpdateMask", maskLayer, size: size, opacity: opacity, previousMousePosition: inputBoard.previousMousePosition, mousePosition: inputBoard.mousePosition);
+                    Dungeonshop.ShaderManager.Instance.applyTexture("UpdateMask", maskLayer, size: size, opacity: opacity, previousMousePosition: inputBoard.previousMousePositionRelative, mousePosition: inputBoard.mousePositionRelative);
                 }
                 else if(!Input.GetMouseButton(0))
                 {
