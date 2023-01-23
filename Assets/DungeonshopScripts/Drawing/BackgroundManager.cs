@@ -48,7 +48,7 @@ namespace Dungeonshop
 
         void uniteLayers()
         {
-            ShaderManager.Instance.applyTexture("ApplyWhiteTexture", canvasLayer, opacity: 1);
+            ShaderManager.Instance.applyTexture("ApplyWhiteTexture", canvasLayer, opacity: CanvasManager.Instance.getVisibleLayers().Count > 0 ? 1 : 0);
             ShaderManager.Instance.applyTexture("ApplyWhiteTexture", displayLayer, opacity: 0);
             foreach (Layer layer in CanvasManager.Instance.getVisibleLayers())
             {
@@ -88,9 +88,10 @@ namespace Dungeonshop
         public void UpdateBackground()
         {
             DrawingAreaInputHandler inputBoard = DrawingAreaInputHandler.Instance;
+            uniteLayers();
             if (CanvasManager.Instance.getVisibleLayers().Count > 0)
             {
-                uniteLayers();
+
                 if (inputBoard.insideDrawingArea)
                 {
                     float size = BrushSelectorManager.Instance.getSize();
