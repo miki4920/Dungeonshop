@@ -7,7 +7,9 @@ namespace Dungeonshop
     public class UndoStorage : MonoBehaviour
     {
         [HideInInspector] public static UndoStorage Instance;
-        private List<CanvasManager> undoList();
+        private Stack<CanvasManager> undoList;
+        private Stack<CanvasManager> redoList;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -20,6 +22,10 @@ namespace Dungeonshop
             }
         }
 
+        private void addUndo()
+        {
+            undoList.Push(CanvasManager.Instance);
+        }
 
     }
 }
