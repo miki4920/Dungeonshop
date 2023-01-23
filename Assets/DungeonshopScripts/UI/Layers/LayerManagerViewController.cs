@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Dungeonshop;
 using TMPro;
 
 namespace Dungeonshop.UI
@@ -11,16 +8,19 @@ namespace Dungeonshop.UI
     {
         [SerializeField] Transform layersContainer;
         [SerializeField] GameObject layerContainerPrefab;
+        [SerializeField] Color notSelected;
+        [SerializeField] Color selected;
         int layerCount;
 
         public void Start()
         {
             layerCount = 1;
+            addLayer();
         }
 
         public void addLayer()
         {
-            Layer blankLayer = Dungeonshop.LayerManager.Instance.createNewLayer();
+            Layer blankLayer = CanvasManager.Instance.createNewLayer();
             GameObject layerContainerParent = Instantiate(this.layerContainerPrefab, this.layersContainer);
             layerContainerParent.GetComponent<LayerDragAndDrop>().viewController = this;
             GameObject layerContainer = layerContainerParent.transform.GetChild(0).gameObject;
@@ -30,16 +30,19 @@ namespace Dungeonshop.UI
             layerContainer.transform.GetChild(1).GetComponent<RawImage>().texture = blankLayer.background;
             layerContainer.transform.GetChild(2).GetComponent<TMP_Text>().text = "Layer " + layerCount.ToString();
             layerCount += 1;
+            changeLayer(layerContainer);
         }
 
         public void changeLayer(GameObject layerObject)
         {
             Layer layer = layerObject.GetComponent<LayerView>().layer;
-            for (int i = 0; i < Dungeonshop.LayerManager.Instance.layers.Count; i++)
+            for (int i = 0; i < CanvasManager.Instance.layers.Count; i++)
             {
-                if (layer == Dungeonshop.LayerManager.Instance.layers[i])
+                layersContainer.GetChild(i).GetComponent<Image>().color = notSelected;
+                if (layer == CanvasManager.Instance.layers[i])
                 {
-                    Dungeonshop.LayerManager.Instance.layer = i;
+                    CanvasManager.Instance.layer = i;
+                    layersContainer.GetChild(i).GetComponent<Image>().color = selected;
                 }
             }
         }
@@ -47,11 +50,11 @@ namespace Dungeonshop.UI
         public void deleteLayer(GameObject layerObject)
         {
             Layer layer = layerObject.GetComponent<LayerView>().layer;
-            for (int i = 0; i < Dungeonshop.LayerManager.Instance.layers.Count; i++)
+            for (int i = 0; i < CanvasManager.Instance.layers.Count; i++)
             {
-                if (layer == Dungeonshop.LayerManager.Instance.layers[i])
+                if (layer == CanvasManager.Instance.layers[i])
                 {
-                    Dungeonshop.LayerManager.Instance.deleteLayer(i);
+                    CanvasManager.Instance.deleteLayer(i);
                     Destroy(layerObject);
                 }
             }
@@ -59,13 +62,13 @@ namespace Dungeonshop.UI
 
         public void changeLayerPosition(int currentIndex, int newIndex)
         {
-            Layer layer = Dungeonshop.LayerManager.Instance.layers[currentIndex];
-            Dungeonshop.LayerManager.Instance.layers.RemoveAt(currentIndex);
+            Layer layer = CanvasManager.Instance.layers[currentIndex];
+            CanvasManager.Instance.layers.RemoveAt(currentIndex);
             if (newIndex > currentIndex)
             {
                 newIndex -= 1;
             }
-            Dungeonshop.LayerManager.Instance.layers.Insert(newIndex, layer);
+            CanvasManager.Instance.layers.Insert(newIndex, layer);
         }
     }
 }
