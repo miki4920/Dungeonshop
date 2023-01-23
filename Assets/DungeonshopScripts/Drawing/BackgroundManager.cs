@@ -10,6 +10,7 @@ namespace Dungeonshop
         public RawImage canvas;
         public int width;
         public int height;
+        private bool change;
         RenderTexture canvasLayer;
         RenderTexture displayLayer;
         RenderTexture maskLayer;
@@ -32,7 +33,7 @@ namespace Dungeonshop
             blankLayer.filterMode = FilterMode.Point;
             blankLayer.enableRandomWrite = true;
             blankLayer.Create();
-            Dungeonshop.ShaderManager.Instance.applyTexture("ApplyWhiteTexture", blankLayer, opacity: 0);
+            ShaderManager.Instance.applyTexture("ApplyWhiteTexture", blankLayer, opacity: 0);
             return blankLayer;
         }
         void Start()
@@ -41,44 +42,45 @@ namespace Dungeonshop
             displayLayer = createBlankRenderTexture();
             maskLayer = createBlankRenderTexture();
             canvas.texture = canvasLayer;
+            change = false;
         }
 
 
         void uniteLayers()
         {
-            Dungeonshop.ShaderManager.Instance.applyTexture("ApplyWhiteTexture", canvasLayer, opacity: 1);
-            Dungeonshop.ShaderManager.Instance.applyTexture("ApplyWhiteTexture", displayLayer, opacity: 0);
-            foreach (Layer layer in Dungeonshop.LayerManager.Instance.getVisibleLayers())
+            ShaderManager.Instance.applyTexture("ApplyWhiteTexture", canvasLayer, opacity: 1);
+            ShaderManager.Instance.applyTexture("ApplyWhiteTexture", displayLayer, opacity: 0);
+            foreach (Layer layer in CanvasManager.Instance.getVisibleLayers())
             {
-                if (layer == Dungeonshop.LayerManager.Instance.getCurrentLayer())
+                if (layer == CanvasManager.Instance.getCurrentLayer())
                 {
-                    Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTexture", displayLayer, overlayLayer: canvasLayer);
-                    Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTexture", displayLayer, overlayLayer: layer.background);
-                    switch (Dungeonshop.UI.BrushSelectorManager.Instance.drawingMode)
+                    ShaderManager.Instance.applyTexture("ApplyTexture", displayLayer, overlayLayer: canvasLayer);
+                    ShaderManager.Instance.applyTexture("ApplyTexture", displayLayer, overlayLayer: layer.background);
+                    switch (BrushSelectorManager.Instance.drawingMode)
                     {
 
                         case DrawingMode.Color:
                             {
-                                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyColorBasedOnMask", displayLayer, overlayColor: Dungeonshop.UI.BrushSelectorManager.Instance.color, maskLayer: maskLayer);
+                                ShaderManager.Instance.applyTexture("ApplyColorBasedOnMask", displayLayer, overlayColor: BrushSelectorManager.Instance.color, maskLayer: maskLayer);
                                 break;
                             }
                         case DrawingMode.Texture:
                             {
-                                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTextureBasedOnMask", displayLayer, overlayLayer: Dungeonshop.UI.BrushSelectorManager.Instance.texture, maskLayer: maskLayer);
+                                ShaderManager.Instance.applyTexture("ApplyTextureBasedOnMask", displayLayer, overlayLayer: BrushSelectorManager.Instance.texture, maskLayer: maskLayer);
                                 break;
                             }
                         case DrawingMode.Eraser:
                             {
-                                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyEraserBasedOnMask", displayLayer, maskLayer: maskLayer);
+                                ShaderManager.Instance.applyTexture("ApplyEraserBasedOnMask", displayLayer, maskLayer: maskLayer);
                                 break;
                             }
                         default: break;
                     }
-                    Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTexture", canvasLayer, overlayLayer: displayLayer);
+                    ShaderManager.Instance.applyTexture("ApplyTexture", canvasLayer, overlayLayer: displayLayer);
                 }
                 else
                 {
-                    Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTexture", canvasLayer, overlayLayer: layer.background);
+                    ShaderManager.Instance.applyTexture("ApplyTexture", canvasLayer, overlayLayer: layer.background);
                 }
             }
         }
@@ -86,43 +88,46 @@ namespace Dungeonshop
         public void UpdateBackground()
         {
             DrawingAreaInputHandler inputBoard = DrawingAreaInputHandler.Instance;
-            uniteLayers();
-            if (Dungeonshop.LayerManager.Instance.getVisibleLayers().Count > 0)
+            if (CanvasManager.Instance.getVisibleLayers().Count > 0)
             {
-                
+                uniteLayers();
                 if (inputBoard.insideDrawingArea)
                 {
-                    float size = Dungeonshop.UI.BrushSelectorManager.Instance.getSize();
-                    float opacity = Dungeonshop.UI.BrushSelectorManager.Instance.getOpacity();
-                    Dungeonshop.ShaderManager.Instance.applyTexture("UpdateMask", maskLayer, size: size, opacity: opacity, previousMousePosition: inputBoard.previousMousePositionRelative, mousePosition: inputBoard.mousePositionRelative);
+                    float size = BrushSelectorManager.Instance.getSize();
+                    float opacity = BrushSelectorManager.Instance.getOpacity();
+                    ShaderManager.Instance.applyTexture("UpdateMask", maskLayer, size: size, opacity: opacity, previousMousePosition: inputBoard.previousMousePositionRelative, mousePosition: inputBoard.mousePositionRelative);
+                    change = true;
                 }
-                else if(!Input.GetMouseButton(0))
+                else if(!inputBoard.isLeftClickPressed)
                 {
-                    RenderTexture layer = Dungeonshop.LayerManager.Instance.getCurrentLayer().background;
-                    switch (Dungeonshop.UI.BrushSelectorManager.Instance.drawingMode)
+                    RenderTexture layer = CanvasManager.Instance.getCurrentLayer().background;
+                    switch (BrushSelectorManager.Instance.drawingMode)
                     {
                         
                         case DrawingMode.Color:
                             {
-                                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyColorBasedOnMask", layer, overlayLayer: Dungeonshop.UI.BrushSelectorManager.Instance.texture, maskLayer: maskLayer);
+                                ShaderManager.Instance.applyTexture("ApplyColorBasedOnMask", layer, overlayLayer: BrushSelectorManager.Instance.texture, maskLayer: maskLayer);
                                 break;
                             }
                         case DrawingMode.Texture:
                             {
-                                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyTextureBasedOnMask", layer, overlayColor: Dungeonshop.UI.BrushSelectorManager.Instance.color, maskLayer: maskLayer);
+                                ShaderManager.Instance.applyTexture("ApplyTextureBasedOnMask", layer, overlayColor: BrushSelectorManager.Instance.color, maskLayer: maskLayer);
                                 break;
                             }
                         case DrawingMode.Eraser:
                             {
-                                Dungeonshop.ShaderManager.Instance.applyTexture("ApplyEraserBasedOnMask", layer, maskLayer: maskLayer);
+                                ShaderManager.Instance.applyTexture("ApplyEraserBasedOnMask", layer, maskLayer: maskLayer);
                                 break;
                             }
                         default: break;
                     }
-                    Dungeonshop.ShaderManager.Instance.applyTexture("ApplyWhiteTexture", maskLayer, opacity: 0);
+                    ShaderManager.Instance.applyTexture("ApplyWhiteTexture", maskLayer, opacity: 0);
+                    if(change)
+                    {
+
+                    }
                 }
             }
-
         }
 
 
