@@ -111,8 +111,11 @@ namespace Dungeonshop
         {
             float mouseDelta = Input.mouseScrollDelta.y;
             mouseDelta = mouseDelta >= 0 ? 1.1f : 0.9f;
-            
-            drawingAreaTransform.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(drawingAreaTransform.rect.width * mouseDelta, drawingAreaTransform.rect.height * mouseDelta);
+            //TODO: Make so that the zooming in zooms to a mouse pointer, rather than centre
+            //TODO: Prevent moving the canvas off the screen
+            Vector2 oldDimensions = drawingAreaTransform.gameObject.GetComponent<RectTransform>().sizeDelta;
+            Vector2 newDimensions = new Vector2(drawingAreaTransform.rect.width * mouseDelta, drawingAreaTransform.rect.height * mouseDelta);
+            drawingAreaTransform.gameObject.GetComponent<RectTransform>().sizeDelta = newDimensions;
         }
     }
 }
