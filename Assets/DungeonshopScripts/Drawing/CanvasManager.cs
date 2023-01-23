@@ -1,14 +1,16 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using Dungeonshop;
+using Dungeonshop.UI;
+using UnityEngine.Rendering.Universal;
 
 namespace Dungeonshop
 {
-    public class LayerManager : MonoBehaviour
+    public class CanvasManager : ColorReceiver
     {
-        public static LayerManager Instance;
-        public List<Layer> layers = new List<Layer>();
+        public static CanvasManager Instance;
+        [HideInInspector] public List<Layer> layers = new List<Layer>();
+        public GameObject environmentLight;
         [HideInInspector] public int layer;
 
         private void Awake()
@@ -67,6 +69,11 @@ namespace Dungeonshop
                 return layers[layer];
             }
             return null;
+        }
+
+        public override void updateColor(Color color)
+        {
+            environmentLight.GetComponent<Light2D>().color = color;
         }
     }
 }
