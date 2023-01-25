@@ -10,13 +10,13 @@ namespace Dungeonshop.UI
     {
         [SerializeField] RawImage colorImage;
         [SerializeField] RawImage currentColor;
-        [SerializeField] Slider hueSlider;
-        [SerializeField] Slider saturationSlider;
-        [SerializeField] Slider lightnessSlider;
-        [SerializeField] TMP_Text hueText;
-        [SerializeField] TMP_Text saturationText;
-        [SerializeField] TMP_Text lightnessText;
+        [SerializeField] SliderLayout hueSlider;
+        [SerializeField] SliderLayout saturationSlider;
+        [SerializeField] SliderLayout lightnessSlider;
         [SerializeField] GameObject colorReceiverObject;
+        float hue;
+        float saturation;
+        float lightness;
         ColorReceiver colorReceiver;
 
         int width;
@@ -30,7 +30,7 @@ namespace Dungeonshop.UI
             {
                 for (int y = 0; y < height; y++)
                 {
-                    colors[y * width + x] = Color.HSVToRGB(hueSlider.value / 360, ((float)x) / width, ((float)y) / height);
+                    colors[y * width + x] = Color.HSVToRGB(hue / 360, ((float)x) / width, ((float)y) / height);
                 }
             }
             texture.filterMode = FilterMode.Point;
@@ -41,40 +41,42 @@ namespace Dungeonshop.UI
 
         void updateSaturation()
         {
-            int saturationWidth = (int) saturationSlider.GetComponent<RectTransform>().rect.width;
-            int saturationHeight = (int)saturationSlider.GetComponent<RectTransform>().rect.height;
+            Transform slider = saturationSlider.transform.GetChild(0);
+            int saturationWidth = (int) slider.GetComponent<RectTransform>().rect.width;
+            int saturationHeight = (int) slider.GetComponent<RectTransform>().rect.height;
             Texture2D texture = new Texture2D(saturationWidth, saturationHeight);
             Color[] colors = new Color[saturationWidth * saturationHeight];
             for (int x = 0; x < saturationWidth; x++ )
             {
                 for(int y = 0; y < saturationHeight; y++)
                 {
-                    colors[y * width + x] = Color.HSVToRGB(hueSlider.value / 360, ((float)x) / saturationWidth, 1);
+                    colors[y * saturationWidth + x] = Color.HSVToRGB(hue / 360, ((float)x) / saturationWidth, 1);
                 }
             }
             texture.filterMode = FilterMode.Point;
             texture.SetPixels(0, 0, saturationWidth, saturationHeight, colors);
             texture.Apply();
-            saturationSlider.transform.GetChild(0).GetComponent<RawImage>().texture = texture;
+            slider.transform.GetChild(0).GetComponent<RawImage>().texture = texture;
         }
 
         void updateLightness()
         {
-            int lightnessWidth = (int)lightnessSlider.GetComponent<RectTransform>().rect.width;
-            int lightnessHeight = (int)lightnessSlider.GetComponent<RectTransform>().rect.height;
+            Transform slider = lightnessSlider.transform.GetChild(0);
+            int lightnessWidth = (int) slider.GetComponent<RectTransform>().rect.width;
+            int lightnessHeight = (int) slider.GetComponent<RectTransform>().rect.height;
             Texture2D texture = new Texture2D(lightnessWidth, lightnessHeight);
             Color[] colors = new Color[lightnessWidth * lightnessHeight];
             for (int x = 0; x < lightnessWidth; x++)
             {
                 for (int y = 0; y < lightnessHeight; y++)
                 {
-                    colors[y * width + x] = Color.HSVToRGB(hueSlider.value/360, 0, ((float)x) / lightnessWidth);
+                    colors[y * lightnessWidth + x] = Color.HSVToRGB(hue/360, 0, ((float)x) / lightnessWidth);
                 }
             }
             texture.filterMode = FilterMode.Point;
             texture.SetPixels(0, 0, lightnessWidth, lightnessHeight, colors);
             texture.Apply();
-            lightnessSlider.transform.GetChild(0).GetComponent<RawImage>().texture = texture;
+            slider.transform.GetChild(0).GetComponent<RawImage>().texture = texture;
         }
 
 
@@ -83,34 +85,40 @@ namespace Dungeonshop.UI
             width = (int) colorImage.GetComponent<RectTransform>().rect.width;
             height =(int) colorImage.GetComponent<RectTransform>().rect.height;
             colorReceiver = colorReceiverObject.GetComponent<ColorReceiver>();
+            hue = hueSlider.currentValue;
+            saturation = saturationSlider.currentValue;
+            lightness = lightnessSlider.currentValue;
             updateRawImage();
             updateSaturation();
             updateLightness();
             updateColor();
-            hueSlider.onValueChanged.AddListener(delegate
+        }
+
+        void Update()
+        {
+            if(hueSlider.currentValue != hue)
             {
+                hue = hueSlider.currentValue;
                 updateRawImage();
                 updateSaturation();
                 updateColor();
-            });
-
-            saturationSlider.onValueChanged.AddListener(delegate
+                
+            }
+            if (saturationSlider.currentValue != saturation)
             {
+                saturation = saturationSlider.currentValue;
                 updateColor();
-            });
-
-            lightnessSlider.onValueChanged.AddListener(delegate
+            }
+            if (lightnessSlider.currentValue != lightness)
             {
+                lightness = lightnessSlider.currentValue;
                 updateColor();
-            });
+            }
         }
 
         public void updateColor()
         {
-            Color color = Color.HSVToRGB(hueSlider.value / 360, saturationSlider.value / 100, lightnessSlider.value / 100);
-            hueText.text = hueSlider.value.ToString();
-            saturationText.text = saturationSlider.value.ToString();
-            lightnessText.text = lightnessSlider.value.ToString();
+            Color color = Color.HSVToRGB(hue / 360, saturation / 100, lightness / 100);
             colorReceiver.updateColor(color);
             currentColor.color = color;
         }
@@ -120,8 +128,8 @@ namespace Dungeonshop.UI
             Vector3 drawingAreaPosition = colorImage.transform.position;
             float globalPositionX = (Mathf.Clamp(Input.mousePosition.x - drawingAreaPosition.x, 0, width) / width);
             float globalPositionY = (1 - (Mathf.Clamp(drawingAreaPosition.y - Input.mousePosition.y, 0, height) / height));
-            saturationSlider.SetValueWithoutNotify((int)(globalPositionX * 100));
-            lightnessSlider.SetValueWithoutNotify((int)(globalPositionY * 100));
+            saturationSlider.updateValue((int) (globalPositionX * 100));
+            lightnessSlider.updateValue((int) (globalPositionY * 100));
             updateColor();
         }
 

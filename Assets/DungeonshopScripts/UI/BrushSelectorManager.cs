@@ -41,14 +41,10 @@ namespace Dungeonshop.UI
             {
                 Instance = this;
             }
-        }
-
-        void Start()
-        {
             drawingMode = DrawingMode.Color;
             color = defaultColor;
             textureColor = defaultColor;
-            DrawingMode[] drawingModes = (DrawingMode[]) Enum.GetValues(typeof(DrawingMode));
+            DrawingMode[] drawingModes = (DrawingMode[])Enum.GetValues(typeof(DrawingMode));
             for (int i = 0; i < drawingModes.Length; i++)
             {
                 sizeDictionary[drawingModes[i]] = defaultSize;

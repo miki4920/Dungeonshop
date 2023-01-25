@@ -38,11 +38,9 @@ public class SliderLayout : MonoBehaviour
 
     public void convertTextToFloat(TMP_InputField textField)
     {
-        Debug.Log(textField.text);
         float.TryParse(textField.text, out float value);
         if(minimum <= value && value <= maximum)
         {
-            Debug.Log(currentValue);
             updateValue(value);
         }
         else
