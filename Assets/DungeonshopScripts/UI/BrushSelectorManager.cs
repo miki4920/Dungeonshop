@@ -21,10 +21,8 @@ namespace Dungeonshop.UI
         [SerializeField] float defaultSize = 20f;
         [SerializeField] float defaultOpacity = 1;
         [SerializeField] Color defaultColor;
-        [SerializeField] Slider sizeSlider;
-        [SerializeField] Slider opacitySlider;
-        [SerializeField] TMP_Text sizeText;
-        [SerializeField] TMP_Text opacityText;
+        [SerializeField] SliderLayout sizeSlider;
+        [SerializeField] SliderLayout opacitySlider;
         [HideInInspector] public DrawingMode drawingMode;
         Dictionary<DrawingMode, float> sizeDictionary = new Dictionary<DrawingMode, float>();
         Dictionary<DrawingMode, float> opacityDictionary = new Dictionary<DrawingMode, float>();
@@ -47,8 +45,6 @@ namespace Dungeonshop.UI
 
         void Start()
         {
-            sizeText.text = defaultSize.ToString();
-            opacityText.text = (defaultOpacity * 100).ToString();
             drawingMode = DrawingMode.Color;
             color = defaultColor;
             textureColor = defaultColor;
@@ -58,26 +54,18 @@ namespace Dungeonshop.UI
                 sizeDictionary[drawingModes[i]] = defaultSize;
                 opacityDictionary[drawingModes[i]] = defaultOpacity;
             }
-            setSliders();
-            sizeSlider.onValueChanged.AddListener(delegate
-            {
-                sizeDictionary[drawingMode] = sizeSlider.value;
-                sizeText.text = sizeSlider.value.ToString();
-            });
+        }
 
-            opacitySlider.onValueChanged.AddListener(delegate
-            {
-                opacityDictionary[drawingMode] = opacitySlider.value/100;
-                opacityText.text = opacitySlider.value.ToString();
-            });
+        private void Update()
+        {
+            sizeDictionary[drawingMode] = sizeSlider.currentValue;
+            opacityDictionary[drawingMode] = opacitySlider.currentValue / 100;
         }
 
         public void setSliders()
         {
-            sizeSlider.SetValueWithoutNotify(sizeDictionary[drawingMode]);
-            sizeText.text = sizeSlider.value.ToString();
-            opacitySlider.SetValueWithoutNotify(opacityDictionary[drawingMode]*100);
-            opacityText.text = opacitySlider.value.ToString();
+            sizeSlider.updateValue(sizeDictionary[drawingMode]);
+            opacitySlider.updateValue(opacityDictionary[drawingMode]*100);
         }
 
         public void changeDrawingMode(DrawingMode newDrawingMode)
