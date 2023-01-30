@@ -25,7 +25,6 @@ namespace Dungeonshop.UI
         [HideInInspector] public Vector3 mousePositionRelative;
         [HideInInspector] public bool insideDrawingArea;
         [HideInInspector] public bool isLeftClickPressed;
-        private bool singleClick;
         [HideInInspector] public bool clickOnce;
         [HideInInspector] public bool isMiddleClickPressed;
         [HideInInspector] public Vector3 previousMousePosition;
@@ -61,14 +60,17 @@ namespace Dungeonshop.UI
             {
                 BackgroundManager.Instance.UpdateBackground();
             }
-            else if (mode == Mode.Light && insideDrawingArea && isLeftClickPressed && !singleClick)
+            else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && LightHandler.LightInstance.lightInstance == null)
             {
                 LightHandler.LightInstance.createLight(mousePosition);
-                singleClick = true;
             }
-            else if (!isLeftClickPressed)
+            else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && LightHandler.LightInstance.lightInstance != null)
             {
-                singleClick = false;
+                LightHandler.LightInstance.updatePosition(mousePosition);
+            }
+            else if (mode == Mode.Light && insideDrawingArea && isLeftClickPressed && LightHandler.LightInstance.lightInstance != null)
+            {
+                LightHandler.LightInstance.lightInstance = null;
             }
             shiftScreen();
             previousMousePosition = mousePosition;
@@ -99,7 +101,7 @@ namespace Dungeonshop.UI
                 holdingOutsideDrawingArea = false;
                 return false;
             }
-            else if(isLeftClickPressed && insideAreaX && insideAreaY && !holdingOutsideDrawingArea)
+            else if(insideAreaX && insideAreaY && !holdingOutsideDrawingArea)
             {
                 return true;
             }
