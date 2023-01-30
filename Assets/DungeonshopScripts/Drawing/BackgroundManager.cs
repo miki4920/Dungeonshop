@@ -92,7 +92,7 @@ namespace Dungeonshop
             if (CanvasManager.Instance.getVisibleLayers().Count > 0)
             {
 
-                if (inputBoard.insideDrawingArea)
+                if (inputBoard.insideDrawingArea && inputBoard.isLeftClickPressed)
                 {
                     float size = BrushSelectorManager.Instance.getSize();
                     float opacity = BrushSelectorManager.Instance.getOpacity();
