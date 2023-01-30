@@ -64,12 +64,6 @@ namespace Dungeonshop.UI
             opacitySlider.updateValue(opacityDictionary[drawingMode]*100);
         }
 
-        public void changeDrawingMode(DrawingMode newDrawingMode)
-        {
-            drawingMode = newDrawingMode;
-            setSliders();
-        }
-
         public void changeDrawingModeInt(int newDrawingMode)
         {
             drawingMode = (DrawingMode) newDrawingMode;

@@ -4,19 +4,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Dungeonshop
+namespace Dungeonshop.UI
 {
+
+    public enum Mode
+    {
+        Drawing,
+        Light,
+        Selection
+    }
     public class DrawingAreaInputHandler : MonoBehaviour
     {
         [HideInInspector] public static DrawingAreaInputHandler Instance;
 
         bool holdingOutsideDrawingArea;
         bool shifting;
+        Mode mode;
 
         [HideInInspector] public Vector3 mousePosition;
         [HideInInspector] public Vector3 mousePositionRelative;
         [HideInInspector] public bool insideDrawingArea;
         [HideInInspector] public bool isLeftClickPressed;
+        private bool singleClick;
+        [HideInInspector] public bool clickOnce;
         [HideInInspector] public bool isMiddleClickPressed;
         [HideInInspector] public Vector3 previousMousePosition;
         [HideInInspector] public Vector3 previousMousePositionRelative;
@@ -47,10 +57,27 @@ namespace Dungeonshop
             insideDrawingArea = isInsideDrawingArea();
             isLeftClickPressed = Input.GetMouseButton(0);
             isMiddleClickPressed = Input.GetMouseButton(2);
-            BackgroundManager.Instance.UpdateBackground();
+            if (mode == Mode.Drawing)
+            {
+                BackgroundManager.Instance.UpdateBackground();
+            }
+            else if (mode == Mode.Light && insideDrawingArea && isLeftClickPressed && !singleClick)
+            {
+                LightHandler.LightInstance.createLight(mousePosition);
+                singleClick = true;
+            }
+            else if (!isLeftClickPressed)
+            {
+                singleClick = false;
+            }
             shiftScreen();
             previousMousePosition = mousePosition;
             previousMousePositionRelative = mousePositionRelative;
+        }
+
+        public void changeMode(int newMode)
+        {
+            mode = (Mode) newMode;
         }
 
         public bool isInsideDrawingArea()
