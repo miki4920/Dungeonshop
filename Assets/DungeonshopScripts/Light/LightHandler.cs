@@ -21,7 +21,7 @@ namespace Dungeonshop.UI
         float angle;
         Color color;
         bool restoreValues;
-        GameObject lightInstance;
+        [HideInInspector] public GameObject lightInstance;
         FieldInfo m_FalloffField = typeof(Light2D).GetField("m_FalloffIntensity", BindingFlags.NonPublic | BindingFlags.Instance);
 
         private void Awake()
@@ -41,14 +41,18 @@ namespace Dungeonshop.UI
             this.color = color;
         }
 
-        public GameObject createLight(Vector3 positon)
+        public void createLight(Vector3 position)
         {
-            GameObject newLight = new GameObject();
-            newLight.name = "Light";
-            newLight.transform.position = positon;
-            newLight.AddComponent<Light2D>();
-            updateLight(newLight);
-            return newLight;
+            lightInstance = new GameObject();
+            lightInstance.name = "Light";
+            lightInstance.AddComponent<Light2D>();
+            updatePosition(position);
+            updateLight(lightInstance);
+        }
+
+        public void updatePosition(Vector3 position)
+        {
+            lightInstance.transform.position = position;
         }
 
         public void updateLight(GameObject light)
@@ -60,7 +64,7 @@ namespace Dungeonshop.UI
             // Needs to be done via reflection because setter doesn't exist
             m_FalloffField.SetValue(lightComponent, falloffStrengthSlider.currentValue);
             lightComponent.color = color;
-            lightComponent.blendStyleIndex = 1;
+            lightComponent.blendStyleIndex = 0;
             lightComponent.overlapOperation = Light2D.OverlapOperation.Additive;
 
     }
@@ -90,4 +94,6 @@ namespace Dungeonshop.UI
             }
         }
     }
+
+
 }
