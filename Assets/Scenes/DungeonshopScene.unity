@@ -751,6 +751,8 @@ MonoBehaviour:
   intensitySlider: {fileID: 1645129844}
   falloffStrengthSlider: {fileID: 1997278174}
   angleSlider: {fileID: 835408343}
+  lightMode: 0
+  lightInstance: {fileID: 0}
 --- !u!1 &225271687
 GameObject:
   m_ObjectHideFlags: 0
@@ -819,6 +821,7 @@ MonoBehaviour:
   isLeftClickPressed: 0
   clickOnce: 0
   isMiddleClickPressed: 0
+  isControlClicked: 0
   previousMousePosition: {x: 0, y: 0, z: 0}
   previousMousePositionRelative: {x: 0, y: 0, z: 0}
   drawingAreaTransform: {fileID: 1957019269}
@@ -871,8 +874,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 225271691}
-          m_TargetAssemblyTypeName: Dungeonshop.DrawingAreaInputHandler, Assembly-CSharp
-          m_MethodName: changeSize
+          m_TargetAssemblyTypeName: Dungeonshop.UI.DrawingAreaInputHandler, Assembly-CSharp
+          m_MethodName: determineScroll
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -2273,9 +2276,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
-          m_TargetAssemblyTypeName: Dungeonshop.UI.BrushSelectorManager, Assembly-CSharp
-          m_MethodName: changeDrawingModeInt
+        - m_Target: {fileID: 211564088}
+          m_TargetAssemblyTypeName: Dungeonshop.UI.LightHandler, Assembly-CSharp
+          m_MethodName: changeMode
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -5395,9 +5398,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
-          m_TargetAssemblyTypeName: Dungeonshop.UI.BrushSelectorManager, Assembly-CSharp
-          m_MethodName: changeDrawingModeInt
+        - m_Target: {fileID: 211564088}
+          m_TargetAssemblyTypeName: Dungeonshop.UI.LightHandler, Assembly-CSharp
+          m_MethodName: changeMode
           m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
