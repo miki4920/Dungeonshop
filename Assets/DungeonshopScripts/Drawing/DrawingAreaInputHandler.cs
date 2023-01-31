@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Dungeonshop.UI
 {
@@ -27,6 +24,7 @@ namespace Dungeonshop.UI
         [HideInInspector] public bool isLeftClickPressed;
         [HideInInspector] public bool clickOnce;
         [HideInInspector] public bool isMiddleClickPressed;
+        [HideInInspector] public bool isControlClicked;
         [HideInInspector] public Vector3 previousMousePosition;
         [HideInInspector] public Vector3 previousMousePositionRelative;
         [SerializeField] RectTransform drawingAreaTransform;
@@ -56,21 +54,27 @@ namespace Dungeonshop.UI
             insideDrawingArea = isInsideDrawingArea();
             isLeftClickPressed = Input.GetMouseButton(0);
             isMiddleClickPressed = Input.GetMouseButton(2);
+            isControlClicked = Input.GetKey(KeyCode.LeftControl);
             if (mode == Mode.Drawing)
             {
                 BackgroundManager.Instance.UpdateBackground();
             }
-            else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && LightHandler.LightInstance.lightInstance == null)
+            
+            else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && LightHandler.LightInstance.lightInstance == null && LightHandler.LightInstance.lightMode == LightMode.Light)
             {
                 LightHandler.LightInstance.createLight(mousePosition);
             }
-            else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && LightHandler.LightInstance.lightInstance != null)
+            else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && LightHandler.LightInstance.lightInstance != null && LightHandler.LightInstance.lightMode == LightMode.Light)
             {
                 LightHandler.LightInstance.updatePosition(mousePosition);
             }
-            else if (mode == Mode.Light && insideDrawingArea && isLeftClickPressed && LightHandler.LightInstance.lightInstance != null)
+            else if (mode == Mode.Light && insideDrawingArea && isLeftClickPressed && LightHandler.LightInstance.lightInstance != null && LightHandler.LightInstance.lightMode == LightMode.Light)
             {
                 LightHandler.LightInstance.lightInstance = null;
+            }
+            else if (mode != Mode.Light && LightHandler.LightInstance.lightInstance != null)
+            {
+                Destroy(LightHandler.LightInstance.lightInstance);
             }
             shiftScreen();
             previousMousePosition = mousePosition;
@@ -136,9 +140,23 @@ namespace Dungeonshop.UI
             }
         }
 
-        public void changeSize()
+        public void determineScroll()
         {
             float mouseDelta = Input.mouseScrollDelta.y;
+            if (isControlClicked && LightHandler.LightInstance.lightInstance != null)
+            {
+                LightHandler.LightInstance.updateRotation(mouseDelta);
+
+            }
+            else
+            {
+                changeSize(mouseDelta);
+            }
+        }
+
+        public void changeSize(float mouseDelta)
+        {
+            
             mouseDelta = mouseDelta >= 0 ? 1.1f : 0.9f;
             //TODO: Make so that the zooming in zooms to a mouse pointer, rather than centre
             //TODO: Prevent moving the canvas off the screen
