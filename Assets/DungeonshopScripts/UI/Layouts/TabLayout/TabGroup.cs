@@ -9,26 +9,24 @@ namespace Dungeonshop.UI
 {
     public class TabGroup : MonoBehaviour
     {
-        public List<TabButton> tabButtons;
+        public List<TabButton> tabButtons = new List<TabButton>();
         public Color tabIdle;
         public Color tabHover;
         public Color tabActive;
         public TabButton selectedTab;
-        public List<GameObject> objectsToSwap;
         public TMP_Text tabGroupName;
         public Enum tabEnum;
-        public void Subscribe(TabButton button)
+        public Func<TabButton> tabButtonFunction;
+
+
+        public void Subscribe(TabButton tabButton)
         {
-            if (tabButtons == null)
+            tabButtons.Add(tabButton);
+            if(selectedTab != null)
             {
-                tabButtons = new List<TabButton>();
-                
+                OnTabSelected(selectedTab);
             }
-            if (button == selectedTab)
-            {
-                OnTabSelected(button);
-            }
-            tabButtons.Add(button);
+            
         }
 
         public void OnTabEnter(TabButton button)
@@ -39,8 +37,6 @@ namespace Dungeonshop.UI
             {
                 button.background.color = tabHover;
             }
-            
-            
         }
 
         public void OnTabExit(TabButton button)
@@ -53,18 +49,18 @@ namespace Dungeonshop.UI
             selectedTab = button;
             ResetTabs();
             button.background.color = tabActive;
-            int index = button.transform.GetSiblingIndex();
-            for(int i = 0; i < objectsToSwap.Count; i++)
+            foreach(TabButton tabButton in tabButtons)
             {
-                if (i == index)
+                if(tabButton.associatedObject != null)
                 {
-                    objectsToSwap[i].SetActive(true);
-                }
-                else
-                {
-                    objectsToSwap[i].SetActive(false);
+                    tabButton.associatedObject.SetActive(false);
                 }
             }
+            if (button.associatedObject != null)
+            {
+                button.associatedObject.SetActive(true);
+            }
+                
         }
 
         public void ResetTabs()

@@ -12,6 +12,7 @@ namespace Dungeonshop.UI
         public TabGroup tabGroup;
         public string tabName;
         public Image background;
+        public GameObject associatedObject;
 
         public void OnPointerClick(PointerEventData eventData)
         {
