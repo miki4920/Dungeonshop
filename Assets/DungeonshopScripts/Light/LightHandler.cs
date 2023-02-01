@@ -1,7 +1,7 @@
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Rendering.Universal;
-using static UnityEngine.Rendering.DebugUI;
 
 namespace Dungeonshop.UI
 {
@@ -29,6 +29,8 @@ namespace Dungeonshop.UI
         bool restoreValues;
         [HideInInspector] public GameObject lightInstance;
         FieldInfo m_FalloffField = typeof(Light2D).GetField("m_FalloffIntensity", BindingFlags.NonPublic | BindingFlags.Instance);
+        [SerializeField] GameObject lightImagePrefab;
+        [SerializeField] GameObject drawingArea;
 
         private void Awake()
         {
@@ -55,8 +57,12 @@ namespace Dungeonshop.UI
         public void createLight(Vector3 position)
         {
             lightInstance = new GameObject();
+            lightInstance.transform.SetParent(drawingArea.transform);
             lightInstance.name = "Light";
             lightInstance.AddComponent<Light2D>();
+            GameObject lightImage = Instantiate(lightImagePrefab);
+            lightImage.transform.SetParent(lightInstance.transform);
+            lightImage.SetActive(false);
             updatePosition(position);
             updateLight(lightInstance);
         }
@@ -64,6 +70,7 @@ namespace Dungeonshop.UI
         public void updatePosition(Vector3 position)
         {
             lightInstance.transform.position = position;
+            lightInstance.transform.GetChild(0).position = position;
         }
 
         public void updateRotation(float mouseDelta)
