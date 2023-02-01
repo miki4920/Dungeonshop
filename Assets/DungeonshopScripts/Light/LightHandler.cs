@@ -83,10 +83,10 @@ namespace Dungeonshop.UI
             lightComponent.color = color;
             lightComponent.blendStyleIndex = 0;
             lightComponent.overlapOperation = Light2D.OverlapOperation.Additive;
-            lightComponent.pointLightInnerAngle = angle;
-            lightComponent.pointLightOuterAngle = angle;
+            lightComponent.pointLightOuterAngle = angleSlider.currentValue;
+            lightComponent.pointLightInnerAngle = angleSlider.currentValue;
 
-    }
+        }
 
     void Update()
         {
