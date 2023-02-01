@@ -72,7 +72,8 @@ namespace Dungeonshop.UI
             {
                 LightHandler.LightInstance.lightInstance = null;
             }
-            else if (mode != Mode.Light && LightHandler.LightInstance.lightInstance != null)
+
+            if ((mode != Mode.Light || LightHandler.LightInstance.lightMode != LightMode.Light) && LightHandler.LightInstance.lightInstance != null)
             {
                 Destroy(LightHandler.LightInstance.lightInstance);
             }
