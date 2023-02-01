@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace Dungeonshop.UI
 {
@@ -164,6 +165,13 @@ namespace Dungeonshop.UI
             Vector2 oldDimensions = drawingAreaTransform.gameObject.GetComponent<RectTransform>().sizeDelta;
             Vector2 newDimensions = new Vector2(drawingAreaTransform.rect.width * mouseDelta, drawingAreaTransform.rect.height * mouseDelta);
             drawingAreaTransform.gameObject.GetComponent<RectTransform>().sizeDelta = newDimensions;
+            foreach(Transform drawingAreaChild in drawingAreaTransform.transform)
+            {
+                drawingAreaChild.transform.localPosition = new Vector3(drawingAreaChild.transform.localPosition.x * mouseDelta, drawingAreaChild.transform.localPosition.y * mouseDelta, 0);
+                Light2D light = drawingAreaChild.GetComponent<Light2D>();
+                light.pointLightInnerRadius = light.pointLightInnerRadius * mouseDelta;
+                light.pointLightOuterRadius = light.pointLightOuterRadius * mouseDelta;
+            }
         }
     }
 }
