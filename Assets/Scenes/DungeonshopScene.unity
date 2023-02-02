@@ -753,6 +753,8 @@ MonoBehaviour:
   angleSlider: {fileID: 835408343}
   lightMode: 0
   lightInstance: {fileID: 0}
+  lightImagePrefab: {fileID: 4413667477291072944, guid: 1e4dfdc4acc05574c82c566994fa8e67, type: 3}
+  drawingArea: {fileID: 1957019268}
 --- !u!1 &225271687
 GameObject:
   m_ObjectHideFlags: 0
@@ -786,7 +788,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1957019269}
-  - {fileID: 1231914536}
+  - {fileID: 1231914541}
   m_Father: {fileID: 1788379482}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1777,9 +1779,6 @@ MonoBehaviour:
   tabHover: {r: 0.3254902, g: 0.3254902, b: 0.3254902, a: 1}
   tabActive: {r: 0.25490198, g: 0.25490198, b: 0.25490198, a: 1}
   selectedTab: {fileID: 1583371422}
-  objectsToSwap:
-  - {fileID: 1716835600}
-  - {fileID: 1702417942}
   tabGroupName: {fileID: 964394013}
 --- !u!114 &529456078
 MonoBehaviour:
@@ -2229,6 +2228,7 @@ MonoBehaviour:
   tabGroup: {fileID: 666651970}
   tabName: Environment
   background: {fileID: 644746408}
+  associatedObject: {fileID: 1763365780}
 --- !u!114 &644746408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2393,9 +2393,6 @@ MonoBehaviour:
   tabHover: {r: 0.20784314, g: 0.20784314, b: 0.20784314, a: 1}
   tabActive: {r: 0.20784314, g: 0.20784314, b: 0.20784314, a: 1}
   selectedTab: {fileID: 644746407}
-  objectsToSwap:
-  - {fileID: 1763365780}
-  - {fileID: 211564083}
   tabGroupName: {fileID: 964394013}
 --- !u!114 &666651971
 MonoBehaviour:
@@ -3051,7 +3048,6 @@ MonoBehaviour:
   tabHover: {r: 0.3254902, g: 0.3254902, b: 0.3254902, a: 1}
   tabActive: {r: 0.3254902, g: 0.3254902, b: 0.3254902, a: 1}
   selectedTab: {fileID: 0}
-  objectsToSwap: []
   tabGroupName: {fileID: 964394013}
 --- !u!114 &772626293
 MonoBehaviour:
@@ -3620,7 +3616,7 @@ RectTransform:
   - {fileID: 147318787}
   - {fileID: 658947171}
   m_Father: {fileID: 1053698364}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -3998,6 +3994,7 @@ MonoBehaviour:
   tabGroup: {fileID: 529456077}
   tabName: Walls
   background: {fileID: 980012377}
+  associatedObject: {fileID: 0}
 --- !u!114 &980012377
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4121,6 +4118,7 @@ MonoBehaviour:
   tabGroup: {fileID: 1983565533}
   tabName: Texture
   background: {fileID: 1041725670}
+  associatedObject: {fileID: 1287577217}
 --- !u!114 &1041725670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4218,8 +4216,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 950675587}
   - {fileID: 242042688}
+  - {fileID: 950675587}
   - {fileID: 1287577218}
   - {fileID: 720713259}
   m_Father: {fileID: 1716835601}
@@ -4677,6 +4675,7 @@ MonoBehaviour:
   tabGroup: {fileID: 1983565533}
   tabName: Eraser
   background: {fileID: 1168454987}
+  associatedObject: {fileID: 720713258}
 --- !u!114 &1168454987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4949,8 +4948,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1231914536}
+  - component: {fileID: 1231914541}
   - component: {fileID: 1231914537}
+  - component: {fileID: 1231914540}
   m_Layer: 0
   m_Name: GlobalLight
   m_TagString: Untagged
@@ -4958,21 +4958,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1231914536
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1231914535}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -172.50336, y: 51.331726, z: -90}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 225271688}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1231914537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5052,6 +5037,34 @@ MonoBehaviour:
   - {x: 0.5, y: -0.5, z: 0}
   - {x: 0.5, y: 0.5, z: 0}
   - {x: -0.5, y: 0.5, z: 0}
+--- !u!222 &1231914540
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1231914535}
+  m_CullTransparentMesh: 1
+--- !u!224 &1231914541
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1231914535}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -90}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 225271688}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1265176966
 GameObject:
   m_ObjectHideFlags: 0
@@ -5425,6 +5438,7 @@ MonoBehaviour:
   tabGroup: {fileID: 666651970}
   tabName: Light Tool
   background: {fileID: 1292086155}
+  associatedObject: {fileID: 211564083}
 --- !u!114 &1292086155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5699,6 +5713,7 @@ MonoBehaviour:
   tabGroup: {fileID: 529456077}
   tabName: Light
   background: {fileID: 1414344969}
+  associatedObject: {fileID: 1702417942}
 --- !u!114 &1414344969
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6399,6 +6414,7 @@ MonoBehaviour:
   tabGroup: {fileID: 1983565533}
   tabName: Color
   background: {fileID: 1579549378}
+  associatedObject: {fileID: 242042687}
 --- !u!114 &1579549378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6522,6 +6538,7 @@ MonoBehaviour:
   tabGroup: {fileID: 529456077}
   tabName: Drawing
   background: {fileID: 1583371423}
+  associatedObject: {fileID: 1716835600}
 --- !u!114 &1583371423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8305,10 +8322,6 @@ MonoBehaviour:
   tabHover: {r: 0.20784314, g: 0.20784314, b: 0.20784314, a: 1}
   tabActive: {r: 0.20784314, g: 0.20784314, b: 0.20784314, a: 1}
   selectedTab: {fileID: 1579549377}
-  objectsToSwap:
-  - {fileID: 242042687}
-  - {fileID: 1287577217}
-  - {fileID: 720713258}
   tabGroupName: {fileID: 964394013}
 --- !u!224 &1983568708 stripped
 RectTransform:
@@ -8599,7 +8612,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1370480607779694840, guid: db79f454a21b48a4383b72c65bec6b2b, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1370480607779694840, guid: db79f454a21b48a4383b72c65bec6b2b, type: 3}
       propertyPath: m_AnchorMax.x
