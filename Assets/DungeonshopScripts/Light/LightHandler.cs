@@ -95,7 +95,24 @@ namespace Dungeonshop.UI
 
         }
 
-    void Update()
+        public void updateLights()
+        {
+            foreach (Layer layer in CanvasManager.Instance.layers)
+            {
+                foreach (GameObject light in layer.lights)
+                {
+                    light.SetActive(false);
+                }
+            }
+            foreach (Layer layer in CanvasManager.Instance.getVisibleLayers())
+            {
+                foreach (GameObject light in layer.lights)
+                {
+                    light.SetActive(true);
+                }
+            }
+        }
+        void Update()
         {
             if(lightInstance == null)
             {
