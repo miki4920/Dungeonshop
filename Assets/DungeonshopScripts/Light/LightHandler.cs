@@ -95,13 +95,14 @@ namespace Dungeonshop.UI
 
         }
 
-        public void updateLights()
+        public void updateLights(bool selectionMode)
         {
             foreach (Layer layer in CanvasManager.Instance.layers)
             {
                 foreach (GameObject light in layer.lights)
                 {
                     light.SetActive(false);
+                    light.transform.GetChild(0).gameObject.SetActive(false);
                 }
             }
             foreach (Layer layer in CanvasManager.Instance.getVisibleLayers())
@@ -109,6 +110,10 @@ namespace Dungeonshop.UI
                 foreach (GameObject light in layer.lights)
                 {
                     light.SetActive(true);
+                    if (selectionMode)
+                    {
+                        light.transform.GetChild(0).gameObject.SetActive(true);
+                    }
                 }
             }
         }
