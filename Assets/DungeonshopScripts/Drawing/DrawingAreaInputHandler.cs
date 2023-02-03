@@ -18,6 +18,7 @@ namespace Dungeonshop.UI
         bool holdingOutsideDrawingArea;
         bool shifting;
         Mode mode;
+        float size;
 
         [HideInInspector] public Vector3 mousePosition;
         public bool snap;
@@ -48,6 +49,7 @@ namespace Dungeonshop.UI
         private void Start()
         {
             holdingOutsideDrawingArea = false;
+            size = 1;
         }
 
         private Vector3 snapToGrid(Vector3 position)
@@ -86,8 +88,12 @@ namespace Dungeonshop.UI
             }
             else if (mode == Mode.Light && insideDrawingArea && isLeftClickPressed && LightHandler.LightInstance.lightInstance != null && LightHandler.LightInstance.lightMode == LightMode.Light)
             {
-                CanvasManager.Instance.getCurrentLayer().lights.Add(LightHandler.LightInstance.lightInstance);
-                LightHandler.LightInstance.lightInstance = null;
+                Layer layer = CanvasManager.Instance.getCurrentLayer();
+                if (layer.visible)
+                {
+                    layer.lights.Add(LightHandler.LightInstance.lightInstance);
+                    LightHandler.LightInstance.lightInstance = null;
+                }
             }
 
             if ((mode != Mode.Light || LightHandler.LightInstance.lightMode != LightMode.Light) && LightHandler.LightInstance.lightInstance != null)
@@ -176,6 +182,7 @@ namespace Dungeonshop.UI
         {
             
             mouseDelta = mouseDelta >= 0 ? 1.1f : 0.9f;
+            size *= mouseDelta;
             //TODO: Make so that the zooming in zooms to a mouse pointer, rather than centre
             //TODO: Prevent moving the canvas off the screen
             Vector2 oldDimensions = drawingAreaTransform.gameObject.GetComponent<RectTransform>().sizeDelta;
