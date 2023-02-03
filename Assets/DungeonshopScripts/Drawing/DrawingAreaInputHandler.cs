@@ -20,6 +20,8 @@ namespace Dungeonshop.UI
         Mode mode;
 
         [HideInInspector] public Vector3 mousePosition;
+        public bool snap;
+        [SerializeField] Checkbox snapCheckbox;
         [HideInInspector] public Vector3 mousePositionRelative;
         [HideInInspector] public bool insideDrawingArea;
         [HideInInspector] public bool isLeftClickPressed;
@@ -48,14 +50,27 @@ namespace Dungeonshop.UI
             holdingOutsideDrawingArea = false;
         }
 
+        private Vector3 snapToGrid(Vector3 position)
+        {
+            if (snap)
+            {
+                return new Vector3(Mathf.Round(position.x / 128) * 128, Mathf.Round(position.y / 128) * 128, 0);
+            }
+            return position;
+        }
+
         private void Update()
         {
+            snap = snapCheckbox.checkValue;
             mousePosition = Input.mousePosition;
-            mousePositionRelative = getMousePosition();
+            mousePosition = snapToGrid(mousePosition);
+            mousePositionRelative = snapToGrid(getMousePosition());
             insideDrawingArea = isInsideDrawingArea();
             isLeftClickPressed = Input.GetMouseButton(0);
             isMiddleClickPressed = Input.GetMouseButton(2);
             isControlClicked = Input.GetKey(KeyCode.LeftControl);
+            BackgroundManager.Instance.uniteLayers();
+            LightHandler.LightInstance.updateLights();
             if (mode == Mode.Drawing)
             {
                 BackgroundManager.Instance.UpdateBackground();
@@ -71,6 +86,7 @@ namespace Dungeonshop.UI
             }
             else if (mode == Mode.Light && insideDrawingArea && isLeftClickPressed && LightHandler.LightInstance.lightInstance != null && LightHandler.LightInstance.lightMode == LightMode.Light)
             {
+                CanvasManager.Instance.getCurrentLayer().lights.Add(LightHandler.LightInstance.lightInstance);
                 LightHandler.LightInstance.lightInstance = null;
             }
 
