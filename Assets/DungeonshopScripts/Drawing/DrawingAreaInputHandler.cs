@@ -70,7 +70,7 @@ namespace Dungeonshop.UI
             isMiddleClickPressed = Input.GetMouseButton(2);
             isControlClicked = Input.GetKey(KeyCode.LeftControl);
             BackgroundManager.Instance.uniteLayers();
-            LightHandler.LightInstance.updateLights();
+            LightHandler.LightInstance.updateLights(mode == Mode.Selection);
             if (mode == Mode.Drawing)
             {
                 BackgroundManager.Instance.UpdateBackground();
