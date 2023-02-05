@@ -42,6 +42,10 @@ namespace Dungeonshop.UI
         public void OnTabExit(TabButton button)
         {
             ResetTabs();
+            if (selectedTab != null)
+            {
+                tabGroupName.text = selectedTab.tabName;
+            }
         }
 
         public void OnTabSelected(TabButton button)
@@ -49,6 +53,7 @@ namespace Dungeonshop.UI
             selectedTab = button;
             ResetTabs();
             button.background.color = tabActive;
+            tabGroupName.text = selectedTab.tabName;
             foreach(TabButton tabButton in tabButtons)
             {
                 if(tabButton.associatedObject != null)
