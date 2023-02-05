@@ -15,6 +15,7 @@ namespace Dungeonshop.UI
         public Color tabActive;
         public List<SelectionButton> selectedButtons = new List<SelectionButton>();
         public TMP_Text tabGroupName;
+        public string defaultName;
         public Enum tabEnum;
         public Func<TabButton> tabButtonFunction;
 
@@ -28,6 +29,7 @@ namespace Dungeonshop.UI
         public void OnTabEnter(SelectionButton button)
         {
             ResetTabs();
+            defaultName = tabGroupName.text;
             tabGroupName.text = button.selectionName;
             button.background.color = tabHover;
         }
@@ -35,7 +37,7 @@ namespace Dungeonshop.UI
         public void OnTabExit(SelectionButton button)
         {
             ResetTabs();
-            tabGroupName.text = "";
+            tabGroupName.text = defaultName;
 
         }
 
