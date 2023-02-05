@@ -39,12 +39,16 @@ namespace Dungeonshop.UI
             }
         }
 
-        public void OnTabExit(TabButton button)
+        public void OnTabExit()
         {
             ResetTabs();
-            if (selectedTab != null)
+            if (selectedTab != null && selectedTab.child == null)
             {
                 tabGroupName.text = selectedTab.tabName;
+            }
+            else if(selectedTab.child != null)
+            {
+                selectedTab.child.OnTabExit();
             }
         }
 

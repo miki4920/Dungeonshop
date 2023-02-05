@@ -13,6 +13,7 @@ namespace Dungeonshop.UI
         public string tabName;
         public Image background;
         public GameObject associatedObject;
+        public TabGroup child;
 
         public void OnPointerClick(PointerEventData eventData)
         {
@@ -26,7 +27,7 @@ namespace Dungeonshop.UI
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            tabGroup.OnTabExit(this);
+            tabGroup.OnTabExit();
         }
 
         void Start()
