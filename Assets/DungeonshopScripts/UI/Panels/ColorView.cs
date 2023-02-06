@@ -123,6 +123,14 @@ namespace Dungeonshop.UI
             currentColor.color = color;
         }
 
+        public void setColor(Color color)
+        {
+            Color.RGBToHSV(color, out hue, out saturation, out lightness);
+            hueSlider.updateValue(hue * 360);
+            saturationSlider.updateValue(saturation * 100);
+            lightnessSlider.updateValue(lightness * 100);
+        }
+
         public void updateColorOnClick()
         {
             Vector3 drawingAreaPosition = colorImage.transform.position;
