@@ -88,6 +88,7 @@ GameObject:
   - component: {fileID: 4971786759704247781}
   - component: {fileID: 9129701380386226810}
   - component: {fileID: 9024128757026171229}
+  - component: {fileID: 247044013273225486}
   m_Layer: 5
   m_Name: LightIcon
   m_TagString: Untagged
@@ -169,3 +170,15 @@ MonoBehaviour:
   m_EffectColor: {r: 0.15294118, g: 0.15294118, b: 0.15294118, a: 0.5}
   m_EffectDistance: {x: 1, y: 1}
   m_UseGraphicAlpha: 1
+--- !u!114 &247044013273225486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4413667477291072944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6510ea008f9bb1149a4df9de65e84ac6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
