@@ -16,9 +16,6 @@ namespace Dungeonshop.UI
         public List<SelectionButton> selectedButtons = new List<SelectionButton>();
         public TMP_Text tabGroupName;
         public string defaultName;
-        public Enum tabEnum;
-        public Func<TabButton> tabButtonFunction;
-
 
         public void Subscribe(SelectionButton button)
         {
@@ -46,13 +43,15 @@ namespace Dungeonshop.UI
             if (selectedButtons.Contains(button))
             {
                 selectedButtons.Remove(button);
+                button.background.color = tabHover;
             }
             else
             {
                 selectedButtons.Add(button);
+                button.background.color = tabActive;
             }
             ResetTabs();
-            button.background.color = tabActive;
+            
         }
 
         public void ResetTabs()
