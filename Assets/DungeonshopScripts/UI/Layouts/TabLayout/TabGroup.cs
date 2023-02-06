@@ -46,7 +46,7 @@ namespace Dungeonshop.UI
             {
                 tabGroupName.text = selectedTab.tabName;
             }
-            else if(selectedTab.child != null)
+            else if(selectedTab != null && selectedTab.child != null)
             {
                 selectedTab.child.OnTabExit();
             }
