@@ -33,6 +33,7 @@ namespace Dungeonshop.UI
         [HideInInspector] public Vector3 previousMousePositionRelative;
         [SerializeField] RectTransform drawingAreaTransform;
         [SerializeField] RectTransform viewingPortTransform;
+        [SerializeField] LightHandler lightHandler;
 
         private void Awake()
         {
@@ -56,7 +57,8 @@ namespace Dungeonshop.UI
         {
             if (snap)
             {
-                return new Vector3(Mathf.Round(position.x / 128) * 128, Mathf.Round(position.y / 128) * 128, 0);
+                float gridSize = 128 * size;
+                return new Vector3(Mathf.Round(position.x / gridSize) * gridSize, Mathf.Round(position.y / gridSize) * gridSize, 0);
             }
             return position;
         }
@@ -72,34 +74,56 @@ namespace Dungeonshop.UI
             isMiddleClickPressed = Input.GetMouseButton(2);
             isControlClicked = Input.GetKey(KeyCode.LeftControl);
             BackgroundManager.Instance.uniteLayers();
-            LightHandler.LightInstance.updateLights(mode == Mode.Selection);
+            updateLights(mode == Mode.Selection);
             if (mode == Mode.Drawing)
             {
                 BackgroundManager.Instance.UpdateBackground();
             }
             
-            else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && LightHandler.LightInstance.lightInstance == null && LightHandler.LightInstance.lightMode == LightMode.Light)
+            else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && lightHandler.lightInstance == null && lightHandler.lightMode == LightMode.Light)
             {
-                LightHandler.LightInstance.createLight(mousePosition);
+                lightHandler.createLight(size);
             }
-            else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && LightHandler.LightInstance.lightInstance != null && LightHandler.LightInstance.lightMode == LightMode.Light)
+            else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && lightHandler.lightInstance != null && lightHandler.lightMode == LightMode.Light)
             {
-                LightHandler.LightInstance.updatePosition(mousePosition);
+                lightHandler.updatePosition(mousePosition);
             }
-            else if (mode == Mode.Light && insideDrawingArea && isLeftClickPressed && LightHandler.LightInstance.lightInstance != null && LightHandler.LightInstance.lightMode == LightMode.Light)
+            else if (mode == Mode.Light && insideDrawingArea && isLeftClickPressed && lightHandler.lightInstance != null && lightHandler.lightMode == LightMode.Light)
             {
                 Layer layer = CanvasManager.Instance.getCurrentLayer();
                 if (layer.visible)
                 {
-                    layer.lights.Add(LightHandler.LightInstance.lightInstance);
-                    LightHandler.LightInstance.lightInstance = null;
+                    layer.objects.Add(lightHandler.lightInstance);
+                    lightHandler.lightInstance = null;
                 }
             }
 
-            if ((mode != Mode.Light || LightHandler.LightInstance.lightMode != LightMode.Light) && LightHandler.LightInstance.lightInstance != null)
+            if (mode == Mode.Light && lightHandler.lightInstance != null && lightHandler.lightMode == LightMode.Light)
             {
-                Destroy(LightHandler.LightInstance.lightInstance);
+                lightHandler.updateLight();
             }
+            if ((mode != Mode.Light || lightHandler.lightMode != LightMode.Light) && lightHandler.lightInstance != null)
+            {
+                Destroy(lightHandler.lightInstance);
+            }
+            if (mode == Mode.Selection)
+            {
+                SelectionManager.Instance.updateSelection();
+            }
+            if (mode == Mode.Selection && !isLeftClickPressed)
+            {
+                SelectionManager.Instance.isObjectSet = false;
+            }
+            if (mode == Mode.Selection && insideDrawingArea && isLeftClickPressed && SelectionManager.Instance.selectedObject != null && !SelectionManager.Instance.isObjectSet)
+            {
+                SelectionManager.Instance.selectedObject = null;
+            }
+            if (mode != Mode.Selection && SelectionManager.Instance.selectedObject != null)
+            {
+                SelectionManager.Instance.selectedObject = null;
+                SelectionManager.Instance.mode = SelectionMode.None;
+            }
+
             shiftScreen();
             previousMousePosition = mousePosition;
             previousMousePositionRelative = mousePositionRelative;
@@ -108,6 +132,29 @@ namespace Dungeonshop.UI
         public void changeMode(int newMode)
         {
             mode = (Mode) newMode;
+        }
+
+        public void updateLights(bool selectionMode)
+        {
+            foreach (Layer layer in CanvasManager.Instance.layers)
+            {
+                foreach (GameObject layerObject in layer.objects)
+                {
+                    layerObject.SetActive(false);
+                    layerObject.transform.GetChild(0).gameObject.SetActive(false);
+                }
+            }
+            foreach (Layer layer in CanvasManager.Instance.getVisibleLayers())
+            {
+                foreach (GameObject layerObject in layer.objects)
+                {
+                    layerObject.SetActive(true);
+                    if (selectionMode)
+                    {
+                        layerObject.transform.GetChild(0).gameObject.SetActive(true);
+                    }
+                }
+            }
         }
 
         public bool isInsideDrawingArea()
@@ -167,9 +214,9 @@ namespace Dungeonshop.UI
         public void determineScroll()
         {
             float mouseDelta = Input.mouseScrollDelta.y;
-            if (isControlClicked && LightHandler.LightInstance.lightInstance != null)
+            if (isControlClicked && lightHandler.lightInstance != null)
             {
-                LightHandler.LightInstance.updateRotation(mouseDelta);
+                lightHandler.updateRotation(mouseDelta);
 
             }
             else
@@ -183,17 +230,18 @@ namespace Dungeonshop.UI
             
             mouseDelta = mouseDelta >= 0 ? 1.1f : 0.9f;
             size *= mouseDelta;
-            //TODO: Make so that the zooming in zooms to a mouse pointer, rather than centre
-            //TODO: Prevent moving the canvas off the screen
-            Vector2 oldDimensions = drawingAreaTransform.gameObject.GetComponent<RectTransform>().sizeDelta;
-            Vector2 newDimensions = new Vector2(drawingAreaTransform.rect.width * mouseDelta, drawingAreaTransform.rect.height * mouseDelta);
+            float scalar = size / drawingAreaTransform.GetComponent<ObjectInformation>().size;
+            drawingAreaTransform.GetComponent<ObjectInformation>().size = size;
+            Vector2 newDimensions = new Vector2(drawingAreaTransform.rect.width * scalar, drawingAreaTransform.rect.height * scalar);
             drawingAreaTransform.gameObject.GetComponent<RectTransform>().sizeDelta = newDimensions;
             foreach(Transform drawingAreaChild in drawingAreaTransform.transform)
             {
                 drawingAreaChild.transform.localPosition = new Vector3(drawingAreaChild.transform.localPosition.x * mouseDelta, drawingAreaChild.transform.localPosition.y * mouseDelta, 0);
                 Light2D light = drawingAreaChild.GetComponent<Light2D>();
-                light.pointLightInnerRadius = light.pointLightInnerRadius * mouseDelta;
-                light.pointLightOuterRadius = light.pointLightOuterRadius * mouseDelta;
+                float lightScalar = size / drawingAreaChild.GetComponent<ObjectInformation>().size;
+                drawingAreaChild.GetComponent<ObjectInformation>().size = size;
+                light.pointLightInnerRadius = light.pointLightInnerRadius * lightScalar;
+                light.pointLightOuterRadius = light.pointLightOuterRadius * lightScalar;
             }
         }
     }
