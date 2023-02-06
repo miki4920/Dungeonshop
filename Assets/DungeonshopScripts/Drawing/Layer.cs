@@ -8,13 +8,13 @@ namespace Dungeonshop
     {
         public RenderTexture background;
         public bool visible = false;
-        public List<GameObject> lights;
+        public List<GameObject> objects;
 
         public Layer(RenderTexture renderTexture)
         {
             this.visible = true;
             this.background = renderTexture;
-            this.lights = new List<GameObject>();
+            this.objects = new List<GameObject>();
         }
 
         public void changeVisibility()
