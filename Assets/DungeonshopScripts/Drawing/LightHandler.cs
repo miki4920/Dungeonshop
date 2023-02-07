@@ -49,12 +49,6 @@ namespace Dungeonshop.UI
             lightImage.SetActive(false);
         }
 
-        public void updatePosition(Vector3 position)
-        {
-            lightInstance.transform.position = position;
-            lightInstance.transform.GetChild(0).position = position;
-        }
-
         public void updateRotation(float mouseDelta)
         {
             mouseDelta = mouseDelta >= 0 ? 5 : -5;
