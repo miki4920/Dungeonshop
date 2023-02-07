@@ -21,6 +21,7 @@ namespace Dungeonshop.UI
         float size;
 
         [HideInInspector] public Vector3 mousePosition;
+        [HideInInspector] public Vector3 mousePositionGrid;
         public bool snap;
         [SerializeField] Checkbox snapCheckbox;
         [HideInInspector] public Vector3 mousePositionRelative;
@@ -53,12 +54,33 @@ namespace Dungeonshop.UI
             size = 1;
         }
 
+        private Vector3 convertToLocal(Vector3 position)
+        {
+            Vector3 drawingAreaPosition = drawingAreaTransform.position;
+            float drawingAreaX = drawingAreaPosition.x - (drawingAreaTransform.rect.width / 2);
+            float drawingAreaY = drawingAreaPosition.y - (drawingAreaTransform.rect.height / 2);
+            position.x -= drawingAreaX;
+            position.y -= drawingAreaY;
+            return position;
+        }
+
+        private Vector3 convertToGlobal(Vector3 position)
+        {
+            Vector3 drawingAreaPosition = drawingAreaTransform.position;
+            position.x += (drawingAreaPosition.x - (drawingAreaTransform.rect.width / 2));
+            position.y += (drawingAreaPosition.y - (drawingAreaTransform.rect.height / 2));
+            return position;
+        }
+
         private Vector3 snapToGrid(Vector3 position)
         {
             if (snap)
             {
                 float gridSize = 128 * size;
-                return new Vector3(Mathf.Round(position.x / gridSize) * gridSize, Mathf.Round(position.y / gridSize) * gridSize, 0);
+                Vector3 local = convertToLocal(position) / gridSize;
+                local = new Vector3(Mathf.Round(local.x) * gridSize, Mathf.Round(local.y) * gridSize, local.z);
+                local = convertToGlobal(local);
+                return local;
             }
             return position;
         }
@@ -67,8 +89,8 @@ namespace Dungeonshop.UI
         {
             snap = snapCheckbox.checkValue;
             mousePosition = Input.mousePosition;
-            mousePosition = snapToGrid(mousePosition);
-            mousePositionRelative = snapToGrid(getMousePosition());
+            mousePositionGrid = snapToGrid(mousePosition);
+            mousePositionRelative = getMousePosition();
             insideDrawingArea = isInsideDrawingArea();
             isLeftClickPressed = Input.GetMouseButton(0);
             isMiddleClickPressed = Input.GetMouseButton(2);
@@ -86,7 +108,7 @@ namespace Dungeonshop.UI
             }
             else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && lightHandler.lightInstance != null && lightHandler.lightMode == LightMode.Light)
             {
-                lightHandler.lightInstance.GetComponent<ObjectInformation>().updatePosition(mousePosition);
+                lightHandler.lightInstance.GetComponent<ObjectInformation>().updatePosition(mousePositionGrid);
             }
             else if (mode == Mode.Light && insideDrawingArea && isLeftClickPressed && lightHandler.lightInstance != null && lightHandler.lightMode == LightMode.Light)
             {
@@ -120,7 +142,7 @@ namespace Dungeonshop.UI
             }
             if (mode == Mode.Selection && insideDrawingArea && isLeftClickPressed && SelectionManager.Instance.selectedObject != null && SelectionManager.Instance.isObjectSet)
             {
-                SelectionManager.Instance.selectedObject.GetComponent<ObjectInformation>().updatePosition(mousePosition);
+                SelectionManager.Instance.selectedObject.GetComponent<ObjectInformation>().updatePosition(mousePositionGrid);
             }
             if (mode != Mode.Selection && SelectionManager.Instance.selectedObject != null)
             {
