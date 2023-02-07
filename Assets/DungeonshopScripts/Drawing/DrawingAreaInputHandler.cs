@@ -86,7 +86,7 @@ namespace Dungeonshop.UI
             }
             else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && lightHandler.lightInstance != null && lightHandler.lightMode == LightMode.Light)
             {
-                lightHandler.updatePosition(mousePosition);
+                lightHandler.lightInstance.GetComponent<ObjectInformation>().updatePosition(mousePosition);
             }
             else if (mode == Mode.Light && insideDrawingArea && isLeftClickPressed && lightHandler.lightInstance != null && lightHandler.lightMode == LightMode.Light)
             {
@@ -117,6 +117,10 @@ namespace Dungeonshop.UI
             if (mode == Mode.Selection && insideDrawingArea && isLeftClickPressed && SelectionManager.Instance.selectedObject != null && !SelectionManager.Instance.isObjectSet)
             {
                 SelectionManager.Instance.selectedObject = null;
+            }
+            if (mode == Mode.Selection && insideDrawingArea && isLeftClickPressed && SelectionManager.Instance.selectedObject != null && SelectionManager.Instance.isObjectSet)
+            {
+                SelectionManager.Instance.selectedObject.GetComponent<ObjectInformation>().updatePosition(mousePosition);
             }
             if (mode != Mode.Selection && SelectionManager.Instance.selectedObject != null)
             {
