@@ -59,12 +59,14 @@ namespace Dungeonshop.UI
                     {
                         lightHandler.gameObject.SetActive(true);
                         lightHandler.lightInstance = selectedObject;
-                        lightHandler.updateSliders();
                         mode = SelectionMode.Light;
                         setObjectValues = true;
+                        lightHandler.updateSliders();
                     }
-                    lightHandler.updateLight();
-                    
+                    else if(setObjectValues)
+                    {
+                        lightHandler.updateLight();
+                    }
                 }
             }
         }
