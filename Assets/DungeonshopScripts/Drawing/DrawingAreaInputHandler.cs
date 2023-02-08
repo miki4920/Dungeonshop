@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -30,6 +31,7 @@ namespace Dungeonshop.UI
         [HideInInspector] public bool clickOnce;
         [HideInInspector] public bool isMiddleClickPressed;
         [HideInInspector] public bool isControlClicked;
+        [HideInInspector] public bool isDeleteClicked;
         [HideInInspector] public Vector3 previousMousePosition;
         [HideInInspector] public Vector3 previousMousePositionRelative;
         [SerializeField] RectTransform drawingAreaTransform;
@@ -95,6 +97,7 @@ namespace Dungeonshop.UI
             isLeftClickPressed = Input.GetMouseButton(0);
             isMiddleClickPressed = Input.GetMouseButton(2);
             isControlClicked = Input.GetKey(KeyCode.LeftControl);
+            isDeleteClicked = Input.GetKey(KeyCode.Delete);
             BackgroundManager.Instance.uniteLayers();
             updateLights(mode == Mode.Selection);
             if (mode == Mode.Drawing)
@@ -144,6 +147,12 @@ namespace Dungeonshop.UI
             {
                 SelectionManager.Instance.selectedObject.GetComponent<ObjectInformation>().updatePosition(mousePositionGrid);
             }
+            if (mode == Mode.Selection && isDeleteClicked && SelectionManager.Instance.selectedObject != null)
+            {
+                Destroy(SelectionManager.Instance.selectedObject);
+                SelectionManager.Instance.selectedObject = null;
+                SelectionManager.Instance.mode = SelectionMode.None;
+            }
             if (mode != Mode.Selection && SelectionManager.Instance.selectedObject != null)
             {
                 SelectionManager.Instance.selectedObject = null;
@@ -162,12 +171,18 @@ namespace Dungeonshop.UI
 
         public void updateLights(bool selectionMode)
         {
+
             foreach (Layer layer in CanvasManager.Instance.layers)
             {
+                layer.objects = layer.objects.Where(item => item != null).ToList();
                 foreach (GameObject layerObject in layer.objects)
                 {
-                    layerObject.SetActive(false);
-                    layerObject.transform.GetChild(0).gameObject.SetActive(false);
+                    if (layerObject != null)
+                    {
+                        layerObject.SetActive(false);
+                        layerObject.transform.GetChild(0).gameObject.SetActive(false);
+                    }
+                    
                 }
             }
             foreach (Layer layer in CanvasManager.Instance.getVisibleLayers())
