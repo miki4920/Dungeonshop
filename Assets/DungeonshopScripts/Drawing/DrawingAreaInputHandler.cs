@@ -3,13 +3,14 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-namespace Dungeonshop.UI
+namespace Dungeonshop
 {
 
     public enum Mode
     {
         Drawing,
         Light,
+        Wall,
         Selection
     }
     public class DrawingAreaInputHandler : MonoBehaviour
@@ -36,7 +37,8 @@ namespace Dungeonshop.UI
         [HideInInspector] public Vector3 previousMousePositionRelative;
         [SerializeField] RectTransform drawingAreaTransform;
         [SerializeField] RectTransform viewingPortTransform;
-        [SerializeField] LightHandler lightHandler;
+        [SerializeField] LightManager lightManager;
+        [SerializeField] WallManager wallManager;
 
         private void Awake()
         {
@@ -104,32 +106,40 @@ namespace Dungeonshop.UI
             {
                 BackgroundManager.Instance.UpdateBackground();
             }
-            
-            else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && lightHandler.lightInstance == null && lightHandler.lightMode == LightMode.Light)
+
+            else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && lightManager.lightInstance == null && lightManager.lightMode == LightMode.Light)
             {
-                lightHandler.createLight(size);
+                lightManager.createLight(size);
             }
-            else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && lightHandler.lightInstance != null && lightHandler.lightMode == LightMode.Light)
+            else if (mode == Mode.Light && insideDrawingArea && !isLeftClickPressed && lightManager.lightInstance != null && lightManager.lightMode == LightMode.Light)
             {
-                lightHandler.lightInstance.GetComponent<ObjectInformation>().updatePosition(mousePositionGrid);
+                lightManager.lightInstance.GetComponent<ObjectInformation>().updatePosition(mousePositionGrid);
             }
-            else if (mode == Mode.Light && insideDrawingArea && isLeftClickPressed && lightHandler.lightInstance != null && lightHandler.lightMode == LightMode.Light)
+            else if (mode == Mode.Light && insideDrawingArea && isLeftClickPressed && lightManager.lightInstance != null && lightManager.lightMode == LightMode.Light)
             {
                 Layer layer = CanvasManager.Instance.getCurrentLayer();
                 if (layer.visible)
                 {
-                    layer.objects.Add(lightHandler.lightInstance);
-                    lightHandler.lightInstance = null;
+                    layer.objects.Add(lightManager.lightInstance);
+                    lightManager.lightInstance = null;
                 }
             }
-
-            if (mode == Mode.Light && lightHandler.lightInstance != null && lightHandler.lightMode == LightMode.Light)
+            else if (mode == Mode.Wall && insideDrawingArea && isLeftClickPressed && wallManager.wallInstance == null)
             {
-                lightHandler.updateLight();
+                wallManager.createWall(size, mousePositionGrid);
             }
-            if ((mode != Mode.Light || lightHandler.lightMode != LightMode.Light) && lightHandler.lightInstance != null)
+            else if (mode == Mode.Wall && insideDrawingArea && !isLeftClickPressed && wallManager.wallInstance != null)
             {
-                Destroy(lightHandler.lightInstance);
+                wallManager.updateWall(mousePositionGrid);
+            }
+
+            if (mode == Mode.Light && lightManager.lightInstance != null && lightManager.lightMode == LightMode.Light)
+            {
+                lightManager.updateLight();
+            }
+            if ((mode != Mode.Light || lightManager.lightMode != LightMode.Light) && lightManager.lightInstance != null)
+            {
+                Destroy(lightManager.lightInstance);
             }
             if (mode == Mode.Selection)
             {
@@ -255,9 +265,9 @@ namespace Dungeonshop.UI
         public void determineScroll()
         {
             float mouseDelta = Input.mouseScrollDelta.y;
-            if (isControlClicked && lightHandler.lightInstance != null)
+            if (isControlClicked && lightManager.lightInstance != null)
             {
-                lightHandler.updateRotation(mouseDelta);
+                lightManager.updateRotation(mouseDelta);
 
             }
             else
@@ -278,11 +288,20 @@ namespace Dungeonshop.UI
             foreach(Transform drawingAreaChild in drawingAreaTransform.transform)
             {
                 drawingAreaChild.transform.localPosition = new Vector3(drawingAreaChild.transform.localPosition.x * mouseDelta, drawingAreaChild.transform.localPosition.y * mouseDelta, 0);
-                Light2D light = drawingAreaChild.GetComponent<Light2D>();
-                float lightScalar = size / drawingAreaChild.GetComponent<ObjectInformation>().size;
-                drawingAreaChild.GetComponent<ObjectInformation>().size = size;
-                light.pointLightInnerRadius = light.pointLightInnerRadius * lightScalar;
-                light.pointLightOuterRadius = light.pointLightOuterRadius * lightScalar;
+                if(drawingAreaChild.GetComponent<Light2D>() != null)
+                {
+                    Light2D light = drawingAreaChild.GetComponent<Light2D>();
+                    float lightScalar = size / drawingAreaChild.GetComponent<ObjectInformation>().size;
+                    drawingAreaChild.GetComponent<ObjectInformation>().size = size;
+                    light.pointLightInnerRadius = light.pointLightInnerRadius * lightScalar;
+                    light.pointLightOuterRadius = light.pointLightOuterRadius * lightScalar;
+                }
+                else if(drawingAreaChild.GetComponent<SpriteRenderer>() != null)
+                {
+                    RectTransform rect = drawingAreaChild.GetComponent<RectTransform>();
+                    rect.localScale = rect.localScale * size / drawingAreaChild.GetComponent<ObjectInformation>().size;
+                    drawingAreaChild.GetComponent<ObjectInformation>().size = size;
+                }
             }
         }
     }
