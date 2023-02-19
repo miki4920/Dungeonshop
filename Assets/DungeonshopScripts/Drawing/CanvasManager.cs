@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using Dungeonshop.UI;
+using Dungeonshop;
 using UnityEngine.Rendering.Universal;
 
 namespace Dungeonshop
