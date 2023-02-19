@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-using Dungeonshop.UI;
+using Dungeonshop;
 
 namespace Dungeonshop
 {
