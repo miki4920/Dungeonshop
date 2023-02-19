@@ -94,6 +94,8 @@ MonoBehaviour:
   tabGroup: {fileID: 0}
   tabName: 
   background: {fileID: 2033666803205743520}
+  associatedObject: {fileID: 0}
+  child: {fileID: 0}
 --- !u!114 &1188410629022648179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,6 +108,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5599cae2caad6af41a0179a5d0457ede, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  texture: {fileID: 0}
+  rawImage: {fileID: 4151435663963995072}
 --- !u!1 &4633792494401580511
 GameObject:
   m_ObjectHideFlags: 0
@@ -139,10 +143,10 @@ RectTransform:
   m_Father: {fileID: 7582046176878464962}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 83.5, y: 83.5}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2463334016576318695
 CanvasRenderer:
