@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-namespace Dungeonshop.UI
+namespace Dungeonshop
 {
     [RequireComponent(typeof(Image))]
     public class SelectionButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler

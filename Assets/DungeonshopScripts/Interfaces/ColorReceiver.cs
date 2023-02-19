@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Dungeonshop.UI
+namespace Dungeonshop
 {
     public abstract class ColorReceiver : MonoBehaviour
     {

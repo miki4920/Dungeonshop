@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Dungeonshop.UI
+namespace Dungeonshop
 {
     public class LayerDragAndDrop : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
     {

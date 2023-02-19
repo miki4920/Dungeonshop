@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Dungeonshop;
 
-namespace Dungeonshop.UI
+namespace Dungeonshop
 {
     public class LayerView : MonoBehaviour, IPointerClickHandler
     {

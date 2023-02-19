@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace Dungeonshop.UI
+namespace Dungeonshop
 {
     public class LayerManagerViewController : MonoBehaviour
     {

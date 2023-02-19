@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Dungeonshop.UI
+namespace Dungeonshop
 {
     public class TabGroup : MonoBehaviour
     {

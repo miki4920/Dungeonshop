@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 
-namespace Dungeonshop.UI
+namespace Dungeonshop
 {
     public class ColorView : MonoBehaviour, IPointerClickHandler
     {

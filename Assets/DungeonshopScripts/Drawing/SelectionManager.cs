@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-namespace Dungeonshop.UI
+namespace Dungeonshop
 {
     public enum SelectionMode
     {
@@ -17,7 +17,7 @@ namespace Dungeonshop.UI
         public GameObject selectedObject;
         public GameObject lightPanel;
         public SelectionMode mode;
-        public LightHandler lightHandler;
+        public LightManager lightHandler;
         bool setObjectValues;
 
         private void Awake()
