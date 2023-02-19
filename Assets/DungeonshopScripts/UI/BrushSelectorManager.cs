@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace Dungeonshop.UI
+namespace Dungeonshop
 {
     public enum DrawingMode
     {
@@ -15,7 +15,7 @@ namespace Dungeonshop.UI
         Eraser
     }
 
-    public class BrushSelectorManager : ColorReceiver
+    public class BrushSelectorManager : ColorReceiver, TextureReceiver
     {
         public static new BrushSelectorManager Instance;
         [SerializeField] float defaultSize = 20f;
@@ -82,9 +82,9 @@ namespace Dungeonshop.UI
             }
         }
 
-        public void updateTexture(Texture2D newTexture)
+        public void updateTexture(Texture2D texture)
         {
-            texture = newTexture;
+            this.texture = texture;
         }
 
         public float getOpacity()
