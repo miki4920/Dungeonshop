@@ -2,14 +2,14 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-namespace Dungeonshop.UI
+namespace Dungeonshop
 {
     public enum LightMode
     {
         Environment,
         Light
     }
-    public class LightHandler : ColorReceiver
+    public class LightManager : ColorReceiver
     {
         [SerializeField] SliderLayout radiusOuterSlider;
         [SerializeField] SliderLayout radiusInnerSlider;
@@ -42,6 +42,8 @@ namespace Dungeonshop.UI
             lightInstance.transform.SetParent(drawingArea.transform);
             lightInstance.name = "Light";
             lightInstance.AddComponent<Light2D>();
+            lightInstance.GetComponent<Light2D>().shadowsEnabled = true;
+            lightInstance.GetComponent<Light2D>().shadowIntensity = 1;
             lightInstance.AddComponent<ObjectInformation>();
             lightInstance.GetComponent<ObjectInformation>().size = size;
             GameObject lightImage = Instantiate(lightImagePrefab);
