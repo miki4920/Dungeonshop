@@ -29,8 +29,10 @@ namespace Dungeonshop
         [HideInInspector] public Vector3 mousePositionRelative;
         [HideInInspector] public bool insideDrawingArea;
         [HideInInspector] public bool isLeftClickPressed;
+        [HideInInspector] public bool isLeftClickClicked;
         [HideInInspector] public bool clickOnce;
         [HideInInspector] public bool isMiddleClickPressed;
+        [HideInInspector] public bool isRightClickClicked;
         [HideInInspector] public bool isControlClicked;
         [HideInInspector] public bool isDeleteClicked;
         [HideInInspector] public Vector3 previousMousePosition;
@@ -97,7 +99,9 @@ namespace Dungeonshop
             mousePositionRelative = getMousePosition();
             insideDrawingArea = isInsideDrawingArea();
             isLeftClickPressed = Input.GetMouseButton(0);
+            isLeftClickClicked = Input.GetMouseButtonDown(0);
             isMiddleClickPressed = Input.GetMouseButton(2);
+            isRightClickClicked = Input.GetMouseButtonDown(1);
             isControlClicked = Input.GetKey(KeyCode.LeftControl);
             isDeleteClicked = Input.GetKey(KeyCode.Delete);
             BackgroundManager.Instance.uniteLayers();
@@ -124,11 +128,17 @@ namespace Dungeonshop
                     lightManager.lightInstance = null;
                 }
             }
-            else if (mode == Mode.Wall && insideDrawingArea && isLeftClickPressed && wallManager.wallInstance == null)
+            else if (mode == Mode.Wall && insideDrawingArea && isLeftClickClicked)
             {
                 wallManager.createWall(size, mousePositionGrid);
             }
-            else if (mode == Mode.Wall && insideDrawingArea && !isLeftClickPressed && wallManager.wallInstance != null)
+            else if (mode == Mode.Wall && insideDrawingArea && isRightClickClicked && wallManager.wallInstance.Count != 0)
+            {
+                Destroy(wallManager.wallInstance.Last());
+                wallManager.wallInstance.RemoveAt(wallManager.wallInstance.Count - 1);
+                wallManager.wallInstance.Clear();
+            }
+            else if (mode == Mode.Wall && insideDrawingArea && !isLeftClickPressed && wallManager.wallInstance.Count != 0)
             {
                 wallManager.updateWall(mousePositionGrid);
             }
@@ -269,6 +279,10 @@ namespace Dungeonshop
             {
                 lightManager.updateRotation(mouseDelta);
 
+            }
+            else if(isControlClicked && SelectionManager.Instance.lightHandler.lightInstance != null)
+            {
+                SelectionManager.Instance.lightHandler.updateRotation(mouseDelta);
             }
             else
             {
