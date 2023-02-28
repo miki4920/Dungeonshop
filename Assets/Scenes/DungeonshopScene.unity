@@ -1035,7 +1035,7 @@ MonoBehaviour:
   lightInstance: {fileID: 0}
   lightImagePrefab: {fileID: 4413667477291072944, guid: 1e4dfdc4acc05574c82c566994fa8e67, type: 3}
   drawingArea: {fileID: 1957019268}
-  colorView: {fileID: 0}
+  colorView: {fileID: 621158924}
 --- !u!1 &225271687
 GameObject:
   m_ObjectHideFlags: 0
@@ -1105,15 +1105,18 @@ MonoBehaviour:
   mousePositionRelative: {x: 0, y: 0, z: 0}
   insideDrawingArea: 0
   isLeftClickPressed: 0
+  isLeftClickClicked: 0
   clickOnce: 0
   isMiddleClickPressed: 0
+  isRightClickClicked: 0
   isControlClicked: 0
   isDeleteClicked: 0
   previousMousePosition: {x: 0, y: 0, z: 0}
   previousMousePositionRelative: {x: 0, y: 0, z: 0}
   drawingAreaTransform: {fileID: 1957019269}
   viewingPortTransform: {fileID: 225271688}
-  lightHandler: {fileID: 211564088}
+  lightManager: {fileID: 211564088}
+  wallManager: {fileID: 1991414951}
 --- !u!114 &225271692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1482,6 +1485,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 211564084}
     m_Modifications:
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_ContentType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_KeyboardType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_CharacterValidation
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4932192427094143377, guid: daaf28da98ebd734cb1980463993d906, type: 3}
       propertyPath: m_WholeNumbers
       value: 0
@@ -2805,6 +2820,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1991414946}
     m_Modifications:
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_ContentType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_KeyboardType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_CharacterValidation
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4932192426353453972, guid: daaf28da98ebd734cb1980463993d906, type: 3}
       propertyPath: m_SizeDelta.x
       value: 184
@@ -3708,6 +3735,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 211564084}
     m_Modifications:
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_ContentType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_KeyboardType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_CharacterValidation
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4932192427094143377, guid: daaf28da98ebd734cb1980463993d906, type: 3}
       propertyPath: m_WholeNumbers
       value: 0
@@ -4118,6 +4157,7 @@ MonoBehaviour:
   path: Textures
   textureTilePrefab: {fileID: 732454971484387715, guid: 938d2be655c841640aeb538ccbea8b98, type: 3}
   textureReceiver: {fileID: 1716835600}
+  sprite: 0
 --- !u!114 &772626291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4627,7 +4667,7 @@ MonoBehaviour:
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 2
+            m_IntArgument: 3
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
@@ -5873,6 +5913,7 @@ MonoBehaviour:
   path: Walls
   textureTilePrefab: {fileID: 732454971484387715, guid: 938d2be655c841640aeb538ccbea8b98, type: 3}
   textureReceiver: {fileID: 1991414945}
+  sprite: 0
 --- !u!114 &1094458395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6452,6 +6493,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 211564084}
     m_Modifications:
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_ContentType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_KeyboardType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_CharacterValidation
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4932192427094143377, guid: daaf28da98ebd734cb1980463993d906, type: 3}
       propertyPath: m_WholeNumbers
       value: 0
@@ -6852,6 +6905,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 211564084}
     m_Modifications:
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_ContentType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_KeyboardType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_CharacterValidation
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4932192427094143377, guid: daaf28da98ebd734cb1980463993d906, type: 3}
       propertyPath: m_WholeNumbers
       value: 0
@@ -7570,6 +7635,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 211564084}
     m_Modifications:
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_ContentType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_KeyboardType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 627513598300264447, guid: daaf28da98ebd734cb1980463993d906, type: 3}
+      propertyPath: m_CharacterValidation
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4932192427220730404, guid: daaf28da98ebd734cb1980463993d906, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -8757,7 +8834,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 41, y: 0}
+  m_AnchoredPosition: {x: 41, y: -0.5}
   m_SizeDelta: {x: 247, y: 998}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1637943836
@@ -10037,7 +10114,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5458297180843131976, guid: a2594b6f52382a241bd6122b7097f24b, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 5458297180843131976, guid: a2594b6f52382a241bd6122b7097f24b, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -11402,7 +11479,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   widthSlider: {fileID: 1149653718}
-  wallPrefab: {fileID: 0}
+  wallPrefab: {fileID: 4370354856178858128, guid: 6b31cab4272186b4e982603c5e677c4d, type: 3}
+  drawingArea: {fileID: 1957019268}
+  wallInstance: []
 --- !u!114 &1997278174 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7500555846658909064, guid: daaf28da98ebd734cb1980463993d906, type: 3}
