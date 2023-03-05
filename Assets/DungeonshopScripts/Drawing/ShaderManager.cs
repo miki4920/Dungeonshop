@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Dungeonshop
@@ -25,8 +26,8 @@ namespace Dungeonshop
             layerShader.GetKernelThreadGroupSizes(kernel,
                 out uint xGroupSize, out uint yGroupSize, out _);
             layerShader.Dispatch(kernel,
-                Mathf.CeilToInt(layer.width / (float)xGroupSize),
-                Mathf.CeilToInt(layer.height / (float)yGroupSize),
+                (int) (layer.width / xGroupSize),
+                (int) (layer.height / yGroupSize),
                 1);
         }
 
