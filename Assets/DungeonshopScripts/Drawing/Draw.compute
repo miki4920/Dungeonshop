@@ -5,10 +5,13 @@
 #pragma kernel ApplyColorBasedOnMask
 #pragma kernel ApplyEraserBasedOnMask
 #pragma kernel UpdateMask
+#pragma kernel ApplyGrid
 
 RWTexture2D<float4> canvas;
-RWTexture2D<float4> mask;
+Texture2D<float4> mask;
 Texture2D<float4> overlayTexture;
+int2 canvasTextureSize;
+int2 overlayTextureSize;
 float4 overlayColor;
 float4 previousMousePosition;
 float4 mousePosition;
@@ -66,7 +69,7 @@ void ApplyTextureBasedOnMask(uint3 id : SV_DispatchThreadID)
 {
     if (mask[id.xy].a > 0)
     {
-        canvas[id.xy].rgba = blendColor(canvas[id.xy].rgba, overlayTexture[id.xy].rgba, mask[id.xy].a);
+        canvas[id.xy].rgba = blendColor(canvas[id.xy].rgba, overlayTexture[id.xy % 2048].rgba, mask[id.xy].a);
     }
 }
 
@@ -92,4 +95,16 @@ void ApplyEraserBasedOnMask(uint3 id : SV_DispatchThreadID)
 void UpdateMask(uint3 id : SV_DispatchThreadID)
 {
     canvas[id.xy] = BrushMask(id.xy, canvas[id.xy], size, opacity, previousMousePosition.xy, mousePosition.xy);
+}
+
+[numthreads(8, 8, 1)]
+void ApplyGrid(uint3 id : SV_DispatchThreadID)
+{
+    for (int i = 0; i < 10; i += 1)
+    {
+        canvas[int2(floor(id.x / 256) * 256 - i, id.y)].rgba = overlayColor.rgba;
+        canvas[int2(floor(id.x / 256) * 256 + i, id.y)].rgba = overlayColor.rgba;
+        canvas[int2(id.x, floor(id.y / 256) * 256 - i)].rgba = overlayColor.rgba;
+        canvas[int2(id.x, floor(id.y / 256) * 256 + i)].rgba = overlayColor.rgba;
+    }
 }
