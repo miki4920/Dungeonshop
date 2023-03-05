@@ -10,10 +10,11 @@ namespace Dungeonshop
         public RawImage canvas;
         public int width;
         public int height;
-        private bool change;
         RenderTexture canvasLayer;
         RenderTexture displayLayer;
         RenderTexture maskLayer;
+        RenderTexture gridLayer;
+        public Checkbox showGridCheckbox;
 
         private void Awake()
         {
@@ -25,26 +26,23 @@ namespace Dungeonshop
             {
                 Instance = this;
             }
+            canvasLayer = createBlankRenderTexture();
+            displayLayer = createBlankRenderTexture();
+            maskLayer = createBlankRenderTexture();
+            gridLayer = createBlankRenderTexture();
+            ShaderManager.Instance.applyTexture("ApplyGrid", gridLayer, overlayColor: Color.black);
+            canvas.texture = canvasLayer;
         }
 
         public RenderTexture createBlankRenderTexture()
         {
             RenderTexture blankLayer = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
-            blankLayer.filterMode = FilterMode.Point;
+            blankLayer.filterMode = FilterMode.Bilinear;
             blankLayer.enableRandomWrite = true;
             blankLayer.Create();
             ShaderManager.Instance.applyTexture("ApplyWhiteTexture", blankLayer, opacity: 0);
             return blankLayer;
         }
-        void Start()
-        {
-            canvasLayer = createBlankRenderTexture();
-            displayLayer = createBlankRenderTexture();
-            maskLayer = createBlankRenderTexture();
-            canvas.texture = canvasLayer;
-            change = false;
-        }
-
 
         public void uniteLayers()
         {
@@ -83,6 +81,10 @@ namespace Dungeonshop
                     ShaderManager.Instance.applyTexture("ApplyTexture", canvasLayer, overlayLayer: layer.background);
                 }
             }
+            if(showGridCheckbox.checkValue)
+            {
+                ShaderManager.Instance.applyTexture("ApplyTexture", canvasLayer, overlayLayer: gridLayer);
+            }
         }
 
         public void UpdateBackground()
@@ -96,7 +98,6 @@ namespace Dungeonshop
                     float size = BrushSelectorManager.Instance.getSize();
                     float opacity = BrushSelectorManager.Instance.getOpacity();
                     ShaderManager.Instance.applyTexture("UpdateMask", maskLayer, size: size, opacity: opacity, previousMousePosition: inputBoard.previousMousePositionRelative, mousePosition: inputBoard.mousePositionRelative);
-                    change = true;
                 }
                 else if(!inputBoard.isLeftClickPressed)
                 {
@@ -122,10 +123,6 @@ namespace Dungeonshop
                         default: break;
                     }
                     ShaderManager.Instance.applyTexture("ApplyWhiteTexture", maskLayer, opacity: 0);
-                    if(change)
-                    {
-
-                    }
                 }
             }
         }
