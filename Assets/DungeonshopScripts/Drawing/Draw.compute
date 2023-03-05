@@ -10,8 +10,6 @@
 RWTexture2D<float4> canvas;
 Texture2D<float4> mask;
 Texture2D<float4> overlayTexture;
-int2 canvasTextureSize;
-int2 overlayTextureSize;
 float4 overlayColor;
 float4 previousMousePosition;
 float4 mousePosition;
