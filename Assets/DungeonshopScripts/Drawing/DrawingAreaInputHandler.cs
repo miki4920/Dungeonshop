@@ -58,6 +58,7 @@ namespace Dungeonshop
         {
             holdingOutsideDrawingArea = false;
             size = 1;
+            drawingAreaTransform.sizeDelta = new Vector2(BackgroundManager.Instance.width, BackgroundManager.Instance.height);
         }
 
         private Vector3 convertToLocal(Vector3 position)
