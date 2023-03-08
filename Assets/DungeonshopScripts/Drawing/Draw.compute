@@ -98,7 +98,7 @@ void UpdateMask(uint3 id : SV_DispatchThreadID)
 [numthreads(8, 8, 1)]
 void ApplyGrid(uint3 id : SV_DispatchThreadID)
 {
-    for (int i = 0; i < 10; i += 1)
+    for (int i = 0; i < 5; i += 1)
     {
         canvas[int2(floor(id.x / 256) * 256 - i, id.y)].rgba = overlayColor.rgba;
         canvas[int2(floor(id.x / 256) * 256 + i, id.y)].rgba = overlayColor.rgba;
