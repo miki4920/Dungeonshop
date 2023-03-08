@@ -9,6 +9,7 @@ namespace Dungeonshop
     public class WallManager : ColorReceiver, TextureReceiver
     {
         [SerializeField] SliderLayout widthSlider;
+        [SerializeField] Checkbox blocksShadow;
         [SerializeField] GameObject wallPrefab;
         [SerializeField] GameObject drawingArea;
         Texture2D texture;
@@ -68,6 +69,10 @@ namespace Dungeonshop
                 int hashCode = (int)2166136261 ^ _shapePathField.GetHashCode();
                 hashCode = hashCode * 16777619 ^ (wallInstance.Last().GetComponent<PolygonCollider2D>().points.GetHashCode());
                 _shapeHash.SetValue(wallInstance.Last().GetComponent<ShadowCaster2D>(), hashCode);
+            }
+            if (!blocksShadow.checkValue)
+            {
+                wallInstance.Last().GetComponent<ShadowCaster2D>().enabled = false;
             }
         }
 
