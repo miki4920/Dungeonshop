@@ -88,6 +88,7 @@ namespace Dungeonshop
             wallInstance.Last().GetComponent<SpriteRenderer>().sortingOrder = 1;
             wallInstance.Last().GetComponent<SpriteRenderer>().sprite = sprite;
             wallInstance.Last().GetComponent<SpriteRenderer>().size = new Vector2(1, 1);
+            wallInstance.Last().GetComponent<SpriteRenderer>().color = color;
             wallInstance.Last().AddComponent<ObjectInformation>();
             wallInstance.Last().GetComponent<ObjectInformation>().size = size;
             wallInstance.Last().transform.position = position;
