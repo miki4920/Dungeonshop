@@ -9,6 +9,9 @@ public class ObjectInformation : MonoBehaviour
     public void updatePosition(Vector3 position)
     {
         transform.position = position;
-        transform.GetChild(0).position = position;
+        if(transform.childCount > 0)
+        {
+            transform.GetChild(0).position = position;
+        }
     }
 }
