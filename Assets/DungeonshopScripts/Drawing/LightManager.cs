@@ -1,4 +1,3 @@
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -74,8 +73,7 @@ namespace Dungeonshop
             lightComponent.pointLightOuterRadius = radiusOuterSlider.currentValue * 256 * lightComponent.GetComponent<ObjectInformation>().size;
             lightComponent.pointLightInnerRadius = Mathf.Min(radiusInnerSlider.currentValue, radiusOuterSlider.currentValue) * 256 * lightComponent.GetComponent<ObjectInformation>().size;
             lightComponent.intensity = intensitySlider.currentValue;
-            FieldInfo m_FalloffField = typeof(Light2D).GetField("m_FalloffIntensity", BindingFlags.NonPublic | BindingFlags.Instance);
-            m_FalloffField.SetValue(lightComponent, falloffStrengthSlider.currentValue);
+            lightComponent.falloffIntensity = falloffStrengthSlider.currentValue;
             lightComponent.color = color;
             lightComponent.blendStyleIndex = 0;
             lightComponent.overlapOperation = Light2D.OverlapOperation.Additive;
