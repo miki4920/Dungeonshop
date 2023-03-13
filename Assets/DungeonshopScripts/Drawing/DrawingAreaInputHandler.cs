@@ -11,6 +11,7 @@ namespace Dungeonshop
         Drawing,
         Light,
         Wall,
+        Asset,
         Selection
     }
     public class DrawingAreaInputHandler : MonoBehaviour
@@ -41,6 +42,7 @@ namespace Dungeonshop
         [SerializeField] RectTransform viewingPortTransform;
         [SerializeField] LightManager lightManager;
         [SerializeField] WallManager wallManager;
+        [SerializeField] AssetManager assetManager;
 
         private void Awake()
         {
@@ -143,6 +145,18 @@ namespace Dungeonshop
             {
                 wallManager.updateWall(mousePositionGrid);
             }
+            else if (mode == Mode.Asset && insideDrawingArea && !isLeftClickPressed && assetManager.assetInstance == null)
+            {
+                assetManager.createAsset(size, mousePositionGrid);
+            }
+            else if (mode == Mode.Asset && insideDrawingArea && isLeftClickPressed && assetManager.assetInstance != null)
+            {
+                assetManager.assetInstance = null;
+            }
+            else if (mode == Mode.Asset && insideDrawingArea && !isLeftClickPressed && assetManager.assetInstance != null)
+            {
+                assetManager.assetInstance.GetComponent<ObjectInformation>().updatePosition(mousePositionGrid);
+            }
 
             if (mode == Mode.Light && lightManager.lightInstance != null && lightManager.lightMode == LightMode.Light)
             {
@@ -151,6 +165,10 @@ namespace Dungeonshop
             if ((mode != Mode.Light || lightManager.lightMode != LightMode.Light) && lightManager.lightInstance != null)
             {
                 Destroy(lightManager.lightInstance);
+            }
+            if (mode != Mode.Asset && assetManager.assetInstance != null)
+            {
+                Destroy(assetManager.assetInstance);
             }
             if (mode == Mode.Selection)
             {
