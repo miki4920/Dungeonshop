@@ -26,8 +26,6 @@ namespace Dungeonshop
             GameObject layerContainer = layerContainerParent.transform.GetChild(0).gameObject;
             layerContainer.GetComponent<LayerView>().layer = blankLayer;
             layerContainer.GetComponent<LayerView>().viewController = this;
-
-            layerContainer.transform.GetChild(1).GetComponent<RawImage>().texture = blankLayer.background;
             layerContainer.transform.GetChild(2).GetComponent<TMP_Text>().text = "Layer " + layerCount.ToString();
             layerCount += 1;
             changeLayer(layerContainer);
