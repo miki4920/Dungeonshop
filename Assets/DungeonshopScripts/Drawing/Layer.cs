@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,7 @@ namespace Dungeonshop
         public RenderTexture background;
         public bool visible = false;
         public List<GameObject> objects;
+        public Guid layerID;
 
         public Layer(RenderTexture renderTexture)
         {
@@ -20,6 +22,7 @@ namespace Dungeonshop
         public void changeVisibility()
         {
             visible = !visible;
+            BackgroundManager.Instance.uniteLayers();
         }
     }
 }
