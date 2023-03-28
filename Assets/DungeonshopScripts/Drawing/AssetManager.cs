@@ -59,13 +59,26 @@ namespace Dungeonshop
             rect.localScale = new Vector2(texture.width * widthSlider.currentValue * size, texture.height * heightSlider.currentValue * size);
         }
 
+        public void updateRotation(float mouseDelta)
+        {
+            mouseDelta = mouseDelta >= 0 ? 5 : -5;
+            assetInstance.transform.Rotate(new Vector3(0, 0, mouseDelta));
+        }
+
+        public void updateDimensions()
+        {
+            float size = assetInstance.GetComponent<ObjectInformation>().size;
+            RectTransform rect = assetInstance.GetComponent<RectTransform>();
+            rect.localScale = new Vector2(texture.width * widthSlider.currentValue * size, texture.height * heightSlider.currentValue * size);
+        }
+
         public void updateAsset(Vector3 position)
         {
             position.z = 0;
-            float size = assetInstance.GetComponent<ObjectInformation>().size;
             RectTransform rect = assetInstance.GetComponent<RectTransform>();
-            rect.localScale = new Vector2(rect.localScale.x * size, rect.localScale.y * size);
-            rect.localScale = new Vector2(Vector3.Distance(rect.position, position), rect.localScale.y);
+            rect.position = position;
+            updateDimensions();
+            
         }
     }
 }
