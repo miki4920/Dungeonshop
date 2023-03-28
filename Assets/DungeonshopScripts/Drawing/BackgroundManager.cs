@@ -15,6 +15,7 @@ namespace Dungeonshop
         RenderTexture maskLayer;
         RenderTexture gridLayer;
         public Checkbox showGridCheckbox;
+        public bool wasLeftClickPressed;
 
         private void Awake()
         {
@@ -95,12 +96,16 @@ namespace Dungeonshop
 
                 if (inputBoard.insideDrawingArea && inputBoard.isLeftClickPressed)
                 {
+                    uniteLayers();
                     float size = BrushSelectorManager.Instance.getSize();
                     float opacity = BrushSelectorManager.Instance.getOpacity();
                     ShaderManager.Instance.applyTexture("UpdateMask", maskLayer, size: size, opacity: opacity, previousMousePosition: inputBoard.previousMousePositionRelative, mousePosition: inputBoard.mousePositionRelative);
+                    wasLeftClickPressed = true;
                 }
-                else if(!inputBoard.isLeftClickPressed)
+                else if(!inputBoard.isLeftClickPressed && wasLeftClickPressed)
                 {
+                    wasLeftClickPressed = false;
+                    CanvasManager.Instance.addUndoHistory();
                     RenderTexture layer = CanvasManager.Instance.getCurrentLayer().background;
                     switch (BrushSelectorManager.Instance.drawingMode)
                     {
