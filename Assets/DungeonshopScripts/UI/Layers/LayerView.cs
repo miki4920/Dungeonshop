@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Dungeonshop;
+using UnityEngine.UI;
 
 namespace Dungeonshop
 {
@@ -10,6 +11,11 @@ namespace Dungeonshop
     {
         public Layer layer;
         public LayerManagerViewController viewController;
+
+        public void Update()
+        {
+            transform.GetChild(1).GetComponent<RawImage>().texture = layer.background;
+        }
 
         public void changeVisibility()
         {
