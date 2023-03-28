@@ -38,13 +38,14 @@ namespace Dungeonshop
                         currentTransform.position = new Vector3(currentTransform.position.x, otherTransformOldPosition.y,
                             currentTransform.position.z);
                         if (0 < distance && distance <= 5)
-                        {
+                        {  
                             viewController.changeLayerPosition(otherTransform.GetSiblingIndex(), currentTransform.GetSiblingIndex());
-
+                            BackgroundManager.Instance.uniteLayers();
                         }
                         else if (-5 <= distance && distance < 0)
                         {
                             viewController.changeLayerPosition(currentTransform.GetSiblingIndex(), otherTransform.GetSiblingIndex());
+                            BackgroundManager.Instance.uniteLayers();
                         }
                         currentTransform.SetSiblingIndex(otherTransform.GetSiblingIndex());
                         currentPosition = currentTransform.position;
