@@ -26,7 +26,9 @@ namespace Dungeonshop
         [HideInInspector] public Vector3 mousePosition;
         [HideInInspector] public Vector3 mousePositionGrid;
         public bool snap;
+        public bool grid;
         [SerializeField] Checkbox snapCheckbox;
+        [SerializeField] Checkbox gridCheckbox;
         [HideInInspector] public Vector3 mousePositionRelative;
         [HideInInspector] public bool insideDrawingArea;
         [HideInInspector] public bool isLeftClickPressed;
@@ -35,6 +37,7 @@ namespace Dungeonshop
         [HideInInspector] public bool isMiddleClickPressed;
         [HideInInspector] public bool isRightClickClicked;
         [HideInInspector] public bool isControlClicked;
+        [HideInInspector] public bool isZClicked;
         [HideInInspector] public bool isDeleteClicked;
         [HideInInspector] public Vector3 previousMousePosition;
         [HideInInspector] public Vector3 previousMousePositionRelative;
@@ -96,6 +99,11 @@ namespace Dungeonshop
 
         private void Update()
         {
+            if(gridCheckbox.checkValue != grid)
+            {
+                grid = gridCheckbox.checkValue;
+                BackgroundManager.Instance.uniteLayers();
+            }
             snap = snapCheckbox.checkValue;
             mousePosition = Input.mousePosition;
             mousePositionGrid = snapToGrid(mousePosition);
@@ -106,8 +114,8 @@ namespace Dungeonshop
             isMiddleClickPressed = Input.GetMouseButton(2);
             isRightClickClicked = Input.GetMouseButtonDown(1);
             isControlClicked = Input.GetKey(KeyCode.LeftControl);
+            isZClicked = Input.GetKeyDown(KeyCode.Z);
             isDeleteClicked = Input.GetKey(KeyCode.Delete);
-            BackgroundManager.Instance.uniteLayers();
             updateLights(mode == Mode.Selection);
             if (mode == Mode.Drawing)
             {
@@ -155,8 +163,13 @@ namespace Dungeonshop
             }
             else if (mode == Mode.Asset && insideDrawingArea && !isLeftClickPressed && assetManager.assetInstance != null)
             {
-                assetManager.assetInstance.GetComponent<ObjectInformation>().updatePosition(mousePositionGrid);
+                assetManager.updateAsset(mousePositionGrid);
             }
+            else if (mode == Mode.Asset && !isLeftClickPressed && assetManager.assetInstance != null)
+            {
+                assetManager.updateDimensions();
+            }
+            
 
             if (mode == Mode.Light && lightManager.lightInstance != null && lightManager.lightMode == LightMode.Light)
             {
@@ -197,7 +210,10 @@ namespace Dungeonshop
                 SelectionManager.Instance.selectedObject = null;
                 SelectionManager.Instance.mode = SelectionMode.None;
             }
-
+            if (isControlClicked && isZClicked)
+            {
+                CanvasManager.Instance.undo();
+            }
             shiftScreen();
             previousMousePosition = mousePosition;
             previousMousePositionRelative = mousePositionRelative;
@@ -297,6 +313,11 @@ namespace Dungeonshop
             if (isControlClicked && lightManager.lightInstance != null)
             {
                 lightManager.updateRotation(mouseDelta);
+
+            }
+            else if (isControlClicked && assetManager.assetInstance != null)
+            {
+                assetManager.updateRotation(mouseDelta);
 
             }
             else if(isControlClicked && SelectionManager.Instance.lightHandler.lightInstance != null)
