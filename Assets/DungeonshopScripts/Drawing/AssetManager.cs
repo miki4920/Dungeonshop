@@ -39,7 +39,7 @@ namespace Dungeonshop
         public void createAsset(float size, Vector3 position)
         {
             position.z = 0;
-            Material material = new Material(Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default"));
+            Material material = new Material(Shader.Find("Universal Render Pipeline/2D/Sprite-Lit-Default"));
             Sprite sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 256);
             assetInstance = Instantiate(assetPrefab);
             assetInstance.GetComponent<Renderer>().material = material;
