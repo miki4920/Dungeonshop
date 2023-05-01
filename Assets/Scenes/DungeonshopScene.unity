@@ -1606,7 +1606,9 @@ MonoBehaviour:
   mousePosition: {x: 0, y: 0, z: 0}
   mousePositionGrid: {x: 0, y: 0, z: 0}
   snap: 0
+  grid: 0
   snapCheckbox: {fileID: 869644766}
+  gridCheckbox: {fileID: 203021993}
   mousePositionRelative: {x: 0, y: 0, z: 0}
   insideDrawingArea: 0
   isLeftClickPressed: 0
@@ -1615,6 +1617,7 @@ MonoBehaviour:
   isMiddleClickPressed: 0
   isRightClickClicked: 0
   isControlClicked: 0
+  isZClicked: 0
   isDeleteClicked: 0
   previousMousePosition: {x: 0, y: 0, z: 0}
   previousMousePositionRelative: {x: 0, y: 0, z: 0}
@@ -3294,7 +3297,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 3
   m_TargetDisplay: 0
 --- !u!1001 &488026822
 PrefabInstance:
@@ -10028,7 +10031,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 25
+  m_ScrollSensitivity: 60
   m_Viewport: {fileID: 1538904770}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 764366566}
@@ -11973,6 +11976,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1991414946}
     m_Modifications:
+    - target: {fileID: 800964137909167050, guid: db79f454a21b48a4383b72c65bec6b2b, type: 3}
+      propertyPath: defaultValue
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1229041065775119351, guid: db79f454a21b48a4383b72c65bec6b2b, type: 3}
       propertyPath: m_SizeDelta.x
       value: 200
@@ -13679,6 +13686,7 @@ MonoBehaviour:
   width: 4096
   height: 4096
   showGridCheckbox: {fileID: 203021993}
+  wasLeftClickPressed: 0
 --- !u!114 &1957019274
 MonoBehaviour:
   m_ObjectHideFlags: 0
