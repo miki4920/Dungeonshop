@@ -33,6 +33,9 @@ namespace Dungeonshop
                 foreach (GameObject wall in wallInstance)
                 {
                     wall.GetComponent<SpriteRenderer>().sprite = sprite;
+                    RectTransform rect = wall.GetComponent<RectTransform>();
+                    rect.localScale = new Vector2(rect.localScale.x, texture.height * widthSlider.currentValue * wall.GetComponent<ObjectInformation>().size);
+                    wall.GetComponent<Renderer>().material.mainTextureScale = new Vector2(rect.localScale.x / texture.width / wall.GetComponent<ObjectInformation>().size / widthSlider.currentValue, 1);
                 }
             }
         }
@@ -70,17 +73,12 @@ namespace Dungeonshop
                 hashCode = hashCode * 16777619 ^ (wallInstance.Last().GetComponent<PolygonCollider2D>().points.GetHashCode());
                 _shapeHash.SetValue(wallInstance.Last().GetComponent<ShadowCaster2D>(), hashCode);
             }
-            if (!blocksShadow.checkValue)
-            {
-                wallInstance.Last().GetComponent<ShadowCaster2D>().enabled = false;
-            }
         }
 
         public void createWall(float size, Vector3 position)
         {
             position.z = 0;
             Sprite sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0, 0.5f), 256);
-
             wallInstance.Add(Instantiate(wallPrefab));
             Material material = new Material(Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default"));
             wallInstance.Last().GetComponent<Renderer>().material = material;
@@ -94,7 +92,7 @@ namespace Dungeonshop
             wallInstance.Last().transform.position = position;
             wallInstance.Last().transform.SetParent(drawingArea.transform);
             RectTransform rect = wallInstance.Last().GetComponent<RectTransform>();
-            rect.localScale = new Vector2((rect.position - position).magnitude, texture.height*widthSlider.currentValue * size);
+            rect.localScale = new Vector2((rect.position - position).magnitude, texture.height * widthSlider.currentValue * size);
             updateShadowcaster();
             updateWall(position);
         }
@@ -109,7 +107,18 @@ namespace Dungeonshop
             float AngleDeg = (180 / Mathf.PI) * AngleRad;
             wallInstance.Last().transform.rotation = Quaternion.Euler(0, 0, AngleDeg);
             float size = wallInstance.Last().GetComponent<ObjectInformation>().size;
-            wallInstance.Last().GetComponent<Renderer>().material.mainTextureScale = new Vector2(rect.localScale.x / texture.width / size, wallInstance.Last().GetComponent<Renderer>().material.mainTextureScale.y);
+            wallInstance.Last().GetComponent<Renderer>().material.mainTextureScale = new Vector2(rect.localScale.x / texture.width / size / widthSlider.currentValue, 1);
+
+            if (!blocksShadow.checkValue)
+            {
+                wallInstance.Last().GetComponent<ShadowCaster2D>().enabled = false;
+                wallInstance.Last().GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/2D/Sprite-Lit-Default");
+            }
+            else
+            {
+                wallInstance.Last().GetComponent<ShadowCaster2D>().enabled = true;
+                wallInstance.Last().GetComponent<Renderer>().material.shader = Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default");
+            }
         }
     }
 }
