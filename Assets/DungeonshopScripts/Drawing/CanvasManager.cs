@@ -96,6 +96,7 @@ namespace Dungeonshop
             for (int i = 0; i < layers.Count; i++) {
                 if(layers[i].layerID == guid)
                 {
+                    layers[i].background.Release();
                     layers[i].background = layerUndoDictionary[guid].Pop();
                     BackgroundManager.Instance.uniteLayers();
                 }
