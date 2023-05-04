@@ -332,14 +332,14 @@ namespace Dungeonshop
 
         public void changeSize(float mouseDelta)
         {
-            
             mouseDelta = mouseDelta >= 0 ? 1.1f : 0.9f;
             size *= mouseDelta;
             float scalar = size / drawingAreaTransform.GetComponent<ObjectInformation>().size;
             drawingAreaTransform.GetComponent<ObjectInformation>().size = size;
-            Vector2 newDimensions = new Vector2(drawingAreaTransform.rect.width * scalar, drawingAreaTransform.rect.height * scalar);
-            drawingAreaTransform.gameObject.GetComponent<RectTransform>().sizeDelta = newDimensions;
-            foreach(Transform drawingAreaChild in drawingAreaTransform.transform)
+            RectTransform drawingArea = drawingAreaTransform.gameObject.GetComponent<RectTransform>();
+            drawingArea.localPosition = drawingArea.localPosition * mouseDelta;
+            drawingArea.sizeDelta = new Vector2(drawingAreaTransform.rect.width * scalar, drawingAreaTransform.rect.height * scalar);
+            foreach (Transform drawingAreaChild in drawingAreaTransform.transform)
             {
                 drawingAreaChild.transform.localPosition = new Vector3(drawingAreaChild.transform.localPosition.x * mouseDelta, drawingAreaChild.transform.localPosition.y * mouseDelta, 0);
                 if(drawingAreaChild.GetComponent<Light2D>() != null)
