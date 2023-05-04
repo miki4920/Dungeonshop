@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Dungeonshop
 {
@@ -16,6 +17,7 @@ namespace Dungeonshop
         {
             currentPosition = currentTransform.position;
             mainContent = currentTransform.parent.gameObject;
+            mainContent.GetComponent<VerticalLayoutGroup>().enabled = false;
             totalChild = mainContent.transform.childCount;
         }
 
@@ -59,6 +61,7 @@ namespace Dungeonshop
         public void OnPointerUp(PointerEventData eventData)
         {
             currentTransform.position = currentPosition;
+            mainContent.GetComponent<VerticalLayoutGroup>().enabled = true;
         }
     }
 }
