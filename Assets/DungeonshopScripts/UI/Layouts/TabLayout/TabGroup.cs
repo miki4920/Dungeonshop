@@ -19,14 +19,17 @@ namespace Dungeonshop
         public Func<TabButton> tabButtonFunction;
 
 
+        public void Update()
+        {
+            if(selectedTab == null)
+            {
+                OnTabSelected(tabButtons[0]);
+            }
+        }
+
         public void Subscribe(TabButton tabButton)
         {
             tabButtons.Add(tabButton);
-            if(selectedTab != null)
-            {
-                OnTabSelected(selectedTab);
-            }
-            
         }
 
         public void OnTabEnter(TabButton button)

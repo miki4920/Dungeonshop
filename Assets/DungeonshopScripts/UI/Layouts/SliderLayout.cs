@@ -13,7 +13,7 @@ public class SliderLayout : MonoBehaviour
     [SerializeField] float defaultValue;
     [HideInInspector] public float currentValue;
 
-    public void Start()
+    public void Awake()
     {
         if(minimum == default(float))
         {
