@@ -12914,6 +12914,10 @@ PrefabInstance:
       propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2569470232676638394, guid: a2594b6f52382a241bd6122b7097f24b, type: 3}
+      propertyPath: defaultValue
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5458297180843131972, guid: a2594b6f52382a241bd6122b7097f24b, type: 3}
       propertyPath: colorView
       value: 
