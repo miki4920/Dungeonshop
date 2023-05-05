@@ -101,12 +101,13 @@ namespace Dungeonshop
         {
             updateWallTextures();
             position.z = 0;
+            float size = wallInstance.Last().GetComponent<ObjectInformation>().size;
             RectTransform rect = wallInstance.Last().GetComponent<RectTransform>();
-            rect.localScale = new Vector2(Vector3.Distance(rect.position, position), rect.localScale.y);
+            rect.localScale = new Vector2(Vector3.Distance(rect.position, position), texture.height * widthSlider.currentValue * size);
             float AngleRad = Mathf.Atan2(position.y - wallInstance.Last().transform.position.y, position.x - wallInstance.Last().transform.position.x);
             float AngleDeg = (180 / Mathf.PI) * AngleRad;
             wallInstance.Last().transform.rotation = Quaternion.Euler(0, 0, AngleDeg);
-            float size = wallInstance.Last().GetComponent<ObjectInformation>().size;
+            
             wallInstance.Last().GetComponent<Renderer>().material.mainTextureScale = new Vector2(rect.localScale.x / texture.width / size / widthSlider.currentValue, 1);
 
             if (!blocksShadow.checkValue)
