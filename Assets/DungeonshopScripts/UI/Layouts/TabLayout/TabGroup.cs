@@ -21,7 +21,7 @@ namespace Dungeonshop
 
         public void Update()
         {
-            if(selectedTab == null)
+            if(selectedTab == null && tabButtons.Count > 0)
             {
                 OnTabSelected(tabButtons[0]);
             }
@@ -30,6 +30,10 @@ namespace Dungeonshop
         public void Subscribe(TabButton tabButton)
         {
             tabButtons.Add(tabButton);
+            if (selectedTab != null)
+            {
+                OnTabSelected(selectedTab);
+            }
         }
 
         public void OnTabEnter(TabButton button)
