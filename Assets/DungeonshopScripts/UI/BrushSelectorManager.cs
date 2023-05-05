@@ -4,8 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
-namespace Dungeonshop.UI
+namespace Dungeonshop
 {
     public enum DrawingMode
     {
@@ -13,19 +14,18 @@ namespace Dungeonshop.UI
         Texture,
         Eraser
     }
-    public class BrushSelectorManager : MonoBehaviour
+
+    public class BrushSelectorManager : ColorReceiver, TextureReceiver
     {
-        public static BrushSelectorManager Instance;
+        public static new BrushSelectorManager Instance;
         [SerializeField] float defaultSize = 20f;
         [SerializeField] float defaultOpacity = 1;
-        [SerializeField] Texture2D defaultTexture;
         [SerializeField] Color defaultColor;
-        [SerializeField] Slider sizeSlider;
-        [SerializeField] Slider opacitySlider;
+        [SerializeField] SliderLayout sizeSlider;
+        [SerializeField] SliderLayout opacitySlider;
         [HideInInspector] public DrawingMode drawingMode;
         Dictionary<DrawingMode, float> sizeDictionary = new Dictionary<DrawingMode, float>();
         Dictionary<DrawingMode, float> opacityDictionary = new Dictionary<DrawingMode, float>();
-        Dictionary<DrawingMode, GameObject> panelDictionary = new Dictionary<DrawingMode, GameObject>();
 
         [HideInInspector] public Color color;
         [HideInInspector] public Color textureColor;
@@ -41,52 +41,36 @@ namespace Dungeonshop.UI
             {
                 Instance = this;
             }
-        }
-
-        void Start()
-        {
             drawingMode = DrawingMode.Color;
-            texture = defaultTexture;
             color = defaultColor;
             textureColor = defaultColor;
-            DrawingMode[] drawingModes = (DrawingMode[]) Enum.GetValues(typeof(DrawingMode));
-            Transform[] children = transform.Cast<Transform>().ToArray();
-            for(int i=0; i < drawingModes.Length; i++)
+            DrawingMode[] drawingModes = (DrawingMode[])Enum.GetValues(typeof(DrawingMode));
+            for (int i = 0; i < drawingModes.Length; i++)
             {
                 sizeDictionary[drawingModes[i]] = defaultSize;
                 opacityDictionary[drawingModes[i]] = defaultOpacity;
-                // Add 1 to i to offset parent object transform being contained in the list
-                panelDictionary[drawingModes[i]] = children[i+1].gameObject;
-                panelDictionary[drawingModes[i]].gameObject.SetActive(false);
             }
-            panelDictionary[drawingMode].SetActive(true);
-            setSliders();
-            sizeSlider.onValueChanged.AddListener(delegate
-            {
-                sizeDictionary[drawingMode] = sizeSlider.value;
-            });
+        }
 
-            opacitySlider.onValueChanged.AddListener(delegate
-            {
-                opacityDictionary[drawingMode] = opacitySlider.value/100;
-            });
+        private void Update()
+        {
+            sizeDictionary[drawingMode] = sizeSlider.currentValue;
+            opacityDictionary[drawingMode] = opacitySlider.currentValue / 100;
         }
 
         public void setSliders()
         {
-            sizeSlider.SetValueWithoutNotify(sizeDictionary[drawingMode]);
-            opacitySlider.SetValueWithoutNotify(opacityDictionary[drawingMode]*100);
+            sizeSlider.updateValue(sizeDictionary[drawingMode]);
+            opacitySlider.updateValue(opacityDictionary[drawingMode]*100);
         }
 
-        public void changeDrawingMode(DrawingMode newDrawingMode)
+        public void changeDrawingModeInt(int newDrawingMode)
         {
-            panelDictionary[drawingMode].SetActive(false);
-            drawingMode = newDrawingMode;
-            panelDictionary[drawingMode].SetActive(true);
+            drawingMode = (DrawingMode) newDrawingMode;
             setSliders();
         }
 
-        public void updateColor(Color newColor)
+        public override void updateColor(Color newColor)
         {
             if(drawingMode == DrawingMode.Color)
             {
@@ -98,9 +82,9 @@ namespace Dungeonshop.UI
             }
         }
 
-        public void updateTexture(Texture2D newTexture)
+        public void updateTexture(Texture2D texture)
         {
-            texture = newTexture;
+            this.texture = texture;
         }
 
         public float getOpacity()
@@ -112,8 +96,6 @@ namespace Dungeonshop.UI
         {
             return sizeDictionary[drawingMode];
         }
-
-
     }
 }
 

@@ -4,19 +4,23 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-namespace Dungeonshop.UI
+namespace Dungeonshop
 {
-    public class TextureView : MonoBehaviour, IPointerClickHandler
+    public class TextureView : MonoBehaviour, IPointerClickHandler, TextureReceiver
     {
-        Texture2D texture;
-        public string textureName;
-        void Start()
+        public Texture2D texture;
+        public TextureReceiver textureReceiver;
+        public RawImage rawImage;
+
+        public void updateTexture(Texture2D texture)
         {
-            texture = (Texture2D) gameObject.GetComponent<RawImage>().texture;
+            this.texture = texture;
+            rawImage.texture = texture;
         }
+
         public void OnPointerClick(PointerEventData eventData)
         {
-            Dungeonshop.UI.BrushSelectorManager.Instance.updateTexture(texture);
+            textureReceiver.updateTexture(texture);
         }
     }
 

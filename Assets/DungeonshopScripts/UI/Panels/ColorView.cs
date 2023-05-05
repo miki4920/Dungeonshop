@@ -1,24 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
-namespace Dungeonshop.UI
+namespace Dungeonshop
 {
     public class ColorView : MonoBehaviour, IPointerClickHandler
     {
         [SerializeField] RawImage colorImage;
-        [SerializeField] Slider hueSlider;
-        [SerializeField] Slider saturationSlider;
-        [SerializeField] Slider lightnessSlider;
+        [SerializeField] RawImage currentColor;
+        [SerializeField] SliderLayout hueSlider;
+        [SerializeField] SliderLayout saturationSlider;
+        [SerializeField] SliderLayout lightnessSlider;
+        [SerializeField] GameObject colorReceiverObject;
         float hue;
         float saturation;
         float lightness;
-        Vector3 mousePosition;
-        int width = 300;
-        int height = 300;
-        Color color;
+        ColorReceiver colorReceiver;
+
+        int width;
+        int height;
 
         void updateRawImage()
         {
@@ -28,7 +30,7 @@ namespace Dungeonshop.UI
             {
                 for (int y = 0; y < height; y++)
                 {
-                    colors[y * width + x] = Color.HSVToRGB(hue, ((float)x) / width, ((float)y) / height);
+                    colors[y * width + x] = Color.HSVToRGB(hue / 360, ((float)x) / width, ((float)y) / height);
                 }
             }
             texture.filterMode = FilterMode.Point;
@@ -37,39 +39,111 @@ namespace Dungeonshop.UI
             colorImage.texture = texture;
         }
 
+        void updateSaturation()
+        {
+            Transform slider = saturationSlider.transform.GetChild(0);
+            int saturationWidth = (int) slider.GetComponent<RectTransform>().rect.width;
+            int saturationHeight = (int) slider.GetComponent<RectTransform>().rect.height;
+            Texture2D texture = new Texture2D(saturationWidth, saturationHeight);
+            Color[] colors = new Color[saturationWidth * saturationHeight];
+            for (int x = 0; x < saturationWidth; x++ )
+            {
+                for(int y = 0; y < saturationHeight; y++)
+                {
+                    colors[y * saturationWidth + x] = Color.HSVToRGB(hue / 360, ((float)x) / saturationWidth, 1);
+                }
+            }
+            texture.filterMode = FilterMode.Point;
+            texture.SetPixels(0, 0, saturationWidth, saturationHeight, colors);
+            texture.Apply();
+            slider.transform.GetChild(0).GetComponent<RawImage>().texture = texture;
+        }
+
+        void updateLightness()
+        {
+            Transform slider = lightnessSlider.transform.GetChild(0);
+            int lightnessWidth = (int) slider.GetComponent<RectTransform>().rect.width;
+            int lightnessHeight = (int) slider.GetComponent<RectTransform>().rect.height;
+            Texture2D texture = new Texture2D(lightnessWidth, lightnessHeight);
+            Color[] colors = new Color[lightnessWidth * lightnessHeight];
+            for (int x = 0; x < lightnessWidth; x++)
+            {
+                for (int y = 0; y < lightnessHeight; y++)
+                {
+                    colors[y * lightnessWidth + x] = Color.HSVToRGB(hue/360, 0, ((float)x) / lightnessWidth);
+                }
+            }
+            texture.filterMode = FilterMode.Point;
+            texture.SetPixels(0, 0, lightnessWidth, lightnessHeight, colors);
+            texture.Apply();
+            slider.transform.GetChild(0).GetComponent<RawImage>().texture = texture;
+        }
+
 
         void Start()
         {
+            width = (int) colorImage.GetComponent<RectTransform>().rect.width;
+            height =(int) colorImage.GetComponent<RectTransform>().rect.height;
+            colorReceiver = colorReceiverObject.GetComponent<ColorReceiver>();
+            hue = hueSlider.currentValue;
+            saturation = saturationSlider.currentValue;
+            lightness = lightnessSlider.currentValue;
             updateRawImage();
-            hueSlider.onValueChanged.AddListener(delegate
+            updateSaturation();
+            updateLightness();
+            updateColor();
+        }
+
+        void Update()
+        {
+            if(hueSlider.currentValue != hue)
             {
-                hue = hueSlider.value / 360;
+                hue = hueSlider.currentValue;
                 updateRawImage();
-            });
-
-            saturationSlider.onValueChanged.AddListener(delegate
+                updateSaturation();
+                updateColor();
+                
+            }
+            if (saturationSlider.currentValue != saturation)
             {
-                saturation = saturationSlider.value / 100;
-            });
-
-            lightnessSlider.onValueChanged.AddListener(delegate
+                saturation = saturationSlider.currentValue;
+                updateColor();
+            }
+            if (lightnessSlider.currentValue != lightness)
             {
-                lightness = lightnessSlider.value / 100;
-            });
+                lightness = lightnessSlider.currentValue;
+                updateColor();
+            }
+        }
+
+        public void updateColor()
+        {
+            Color color = Color.HSVToRGB(hue / 360, saturation / 100, lightness / 100);
+            colorReceiver.updateColor(color);
+            currentColor.color = color;
+        }
+
+        public void setColor(Color color)
+        {
+            Color.RGBToHSV(color, out hue, out saturation, out lightness);
+            hueSlider.updateValue(hue * 360);
+            saturationSlider.updateValue(saturation * 100);
+            lightnessSlider.updateValue(lightness * 100);
+        }
+
+        public void updateColorOnClick()
+        {
+            Vector3 drawingAreaPosition = colorImage.transform.position;
+            float globalPositionX = (Mathf.Clamp(Input.mousePosition.x - drawingAreaPosition.x, 0, width) / width);
+            float globalPositionY = (1 - (Mathf.Clamp(drawingAreaPosition.y - Input.mousePosition.y, 0, height) / height));
+            saturationSlider.updateValue((int) (globalPositionX * 100));
+            lightnessSlider.updateValue((int) (globalPositionY * 100));
+            updateColor();
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            Vector3 drawingAreaPosition = colorImage.transform.position;
-            int globalPositionX = (int)(Input.mousePosition.x - drawingAreaPosition.x);
-            int globalPositionY = (int)(Input.mousePosition.y - drawingAreaPosition.y);
-            Color tempColor = (colorImage.texture as Texture2D).GetPixel(globalPositionX, globalPositionY);
-            BrushSelectorManager.Instance.updateColor(tempColor);
-            float H, S, V;
-            Color.RGBToHSV(tempColor, out H, out S, out V);
-            hueSlider.value = H * 360;
-            saturationSlider.value = S * 100;
-            lightnessSlider.value = V * 100;
+            updateColorOnClick();
         }
     }
 
