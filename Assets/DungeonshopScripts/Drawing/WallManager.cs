@@ -102,7 +102,7 @@ namespace Dungeonshop
             updateWallTextures();
             position.z = 0;
             RectTransform rect = wallInstance.Last().GetComponent<RectTransform>();
-            rect.localScale = new Vector2(Vector3.Distance(rect.position, position)+rect.localScale.y/3, rect.localScale.y);
+            rect.localScale = new Vector2(Vector3.Distance(rect.position, position), rect.localScale.y);
             float AngleRad = Mathf.Atan2(position.y - wallInstance.Last().transform.position.y, position.x - wallInstance.Last().transform.position.x);
             float AngleDeg = (180 / Mathf.PI) * AngleRad;
             wallInstance.Last().transform.rotation = Quaternion.Euler(0, 0, AngleDeg);
