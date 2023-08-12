@@ -24,12 +24,6 @@ Welcome to Dungeonshop, a next-generation map-making tool inspired by Dungeondra
 - **Advanced Layer System**: Inspired by Photoshop, manage your map elements with a sophisticated layer system.
 - **Enhanced Performance**: Faster load times, smoother interactions, and quicker exports.
 
-## Getting Started
-
-1. **Installation**: Follow the installation guide to get Dungeonshop up and running on your system.
-2. **Tutorials**: If you're new to map-making or just want to get familiar with Dungeonshop's features, check out our tutorial section.
-3. **Community**: Join our community of creators to share your maps, get feedback, and discover new assets and tips.
-
 ## Contribution
 
 We welcome contributions from the community. If you have a feature request, bug report, or want to contribute to the codebase, please check out our contribution guidelines.
